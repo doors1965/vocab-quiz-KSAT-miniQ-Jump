@@ -931,46 +931,23 @@ document.addEventListener('DOMContentLoaded',function(){
   toggleCat('vocab');
   var ni=document.getElementById('s-name');
   if(ni) ni.addEventListener('input',function(){this.style.borderColor='var(--bds)';});
-});
 
-function buildGrid(cid,selSet,ctrId){
-  var g=document.getElementById(cid);
-  ALL_Q.forEach(function(q){
-    var b=document.createElement('button');
-    b.className='qbtn';
-    b.textContent=q;
-    b.addEventListener('click',function(){
-      b.classList.toggle('on');
-      if(selSet.has(q)) selSet.delete(q);
-      else selSet.add(q);
-      updateCtr(selSet,ctrId);
-    });
-    g.appendChild(b);
+  document.getElementById('tq-all').addEventListener('click',function(){
+    document.querySelectorAll('#tq-grid .qbtn').forEach(function(b){b.classList.add('on');tSel.add(b.textContent);});
+    updateCtr(tSel,'tq-ctr');
   });
-}
-
-function updateCtr(sel,ctrId){
-  var n=WL.filter(function(w){return sel.has(w[4]);}).length;
-  var el=document.getElementById(ctrId);
-  el.innerHTML='<strong>'+n+'</strong> words from <strong>'+sel.size+'</strong> round(s)';
-}
-
-document.getElementById('tq-all').addEventListener('click',function(){
-  document.querySelectorAll('#tq-grid .qbtn').forEach(function(b){b.classList.add('on');tSel.add(b.textContent);});
-  updateCtr(tSel,'tq-ctr');
-});
-document.getElementById('tq-clr').addEventListener('click',function(){
-  document.querySelectorAll('#tq-grid .qbtn').forEach(function(b){b.classList.remove('on');});
-  tSel.clear();updateCtr(tSel,'tq-ctr');
-});
-document.getElementById('sq-all').addEventListener('click',function(){
-  document.querySelectorAll('#sq-grid .qbtn').forEach(function(b){b.classList.add('on');sSel.add(b.textContent);});
-  updateCtr(sSel,'sq-ctr');
-});
-document.getElementById('sq-clr').addEventListener('click',function(){
-  document.querySelectorAll('#sq-grid .qbtn').forEach(function(b){b.classList.remove('on');});
-  sSel.clear();updateCtr(sSel,'sq-ctr');
-});
+  document.getElementById('tq-clr').addEventListener('click',function(){
+    document.querySelectorAll('#tq-grid .qbtn').forEach(function(b){b.classList.remove('on');});
+    tSel.clear();updateCtr(tSel,'tq-ctr');
+  });
+  document.getElementById('sq-all').addEventListener('click',function(){
+    document.querySelectorAll('#sq-grid .qbtn').forEach(function(b){b.classList.add('on');sSel.add(b.textContent);});
+    updateCtr(sSel,'sq-ctr');
+  });
+  document.getElementById('sq-clr').addEventListener('click',function(){
+    document.querySelectorAll('#sq-grid .qbtn').forEach(function(b){b.classList.remove('on');});
+    sSel.clear();updateCtr(sSel,'sq-ctr');
+  });
 
 function shuffle(a){var b=[].concat(a);for(var i=b.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=b[i];b[i]=b[j];b[j]=t;}return b;}
 
@@ -1547,6 +1524,30 @@ document.getElementById('sc-new').addEventListener('click',function(){
   document.getElementById('s-score').style.display='none';
   document.getElementById('s-setup').style.display='block';
 });
+});
+
+function buildGrid(cid,selSet,ctrId){
+  var g=document.getElementById(cid);
+  ALL_Q.forEach(function(q){
+    var b=document.createElement('button');
+    b.className='qbtn';
+    b.textContent=q;
+    b.addEventListener('click',function(){
+      b.classList.toggle('on');
+      if(selSet.has(q)) selSet.delete(q);
+      else selSet.add(q);
+      updateCtr(selSet,ctrId);
+    });
+    g.appendChild(b);
+  });
+}
+
+function updateCtr(sel,ctrId){
+  var n=WL.filter(function(w){return sel.has(w[4]);}).length;
+  var el=document.getElementById(ctrId);
+  el.innerHTML='<strong>'+n+'</strong> words from <strong>'+sel.size+'</strong> round(s)';
+}
+
 // ─── POS TAGGER ────────────────────────────────
 var POS_COLORS={
   'noun':{bg:'#DBEAFE',border:'#3B82F6',color:'#1E3A8A'},
