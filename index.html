@@ -1,0 +1,1808 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>EBS 수능특강 Q Jump 단어 Quiz — 01~14회</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<style>
+:root{
+  --acc:#1A3A5C;--acc2:#2C5282;--grn:#1E6B3C;--grn-l:#E3F5EB;
+  --red:#8B0000;--red-l:#FDEDEC;--bg:#F5F2EB;--sf:#FEFCF7;--sf2:#EEEBE3;
+  --ink:#1A1814;--ink2:#6B6760;--ink3:#A8A49E;
+  --bd:rgba(26,24,20,.13);--bds:rgba(26,24,20,.26);--r:10px;--rl:16px;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Segoe UI',Arial,sans-serif;background:var(--bg);color:var(--ink);min-height:100vh;}
+.nav{background:var(--acc);color:#fff;padding:0 .75rem;display:flex;align-items:center;position:sticky;top:0;z-index:100;box-shadow:0 2px 6px rgba(0,0,0,.25);}
+.nav-title{font-size:13px;font-weight:700;margin-right:auto;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;padding-right:8px;}
+.nav-tab{padding:13px 14px;font-size:13px;font-weight:600;cursor:pointer;border:none;border-bottom:3px solid transparent;color:rgba(255,255,255,.6);background:none;font-family:inherit;white-space:nowrap;transition:all .15s;}
+.nav-tab.active{color:#fff;border-bottom-color:#fff;}
+.nav-tab:hover{color:#fff;}
+.panel{display:none;padding:1rem 1rem 3rem;max-width:760px;margin:0 auto;}
+.panel.active{display:block;}
+.card{background:var(--sf);border:1px solid var(--bd);border-radius:var(--rl);padding:1.2rem;margin-bottom:1rem;}
+.ct{font-size:11px;font-weight:700;color:var(--acc);text-transform:uppercase;letter-spacing:.6px;margin-bottom:.85rem;}
+.qgrid{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:.6rem;}
+.qbtn{padding:5px 11px;border:1.5px solid var(--bds);border-radius:20px;background:var(--sf);color:var(--ink2);font-size:12px;font-weight:700;cursor:pointer;transition:all .15s;user-select:none;font-family:inherit;}
+.qbtn:hover{background:var(--sf2);}
+.qbtn.on{background:var(--acc);color:#fff;border-color:var(--acc);}
+.lbtn{background:none;border:none;color:var(--acc);font-size:12px;cursor:pointer;text-decoration:underline;padding:0;font-family:inherit;}
+.ctr{font-size:12px;color:var(--ink2);margin-top:.4rem;}
+.ctr strong{color:var(--acc);}
+.opt-row{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:.55rem;}
+.ck{display:flex;align-items:center;gap:6px;font-size:13px;color:var(--ink2);cursor:pointer;}
+.ck input{width:15px;height:15px;accent-color:var(--acc);}
+.ck small{color:var(--ink3);font-size:11px;}
+input[type=text]{padding:7px 11px;border:1px solid var(--bds);border-radius:var(--r);font-size:13px;background:var(--sf);color:var(--ink);font-family:inherit;outline:none;}
+input[type=text]:focus{border-color:var(--acc);}
+.btn{padding:10px 18px;border-radius:var(--r);font-size:13px;font-weight:600;cursor:pointer;border:none;font-family:inherit;transition:all .15s;}
+.btn-p{background:var(--acc);color:#fff;}
+.btn-p:hover{background:#0f2640;}
+.btn-s{background:var(--sf2);color:var(--ink);border:1px solid var(--bds);}
+.btn-s:hover{background:#ddd9d0;}
+.btn-g{background:var(--grn);color:#fff;}
+.btn-g:hover{background:#155230;}
+.brow{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:.75rem;}
+.st{font-size:12px;padding:8px 12px;border-radius:var(--r);margin-top:.65rem;display:none;}
+.ok{background:var(--grn-l);color:var(--grn);border:1px solid #a8dbb8;}
+.er{background:var(--red-l);color:var(--red);border:1px solid #f5c0c0;}
+.mc{border:2px solid var(--bds);border-radius:var(--rl);padding:1rem;cursor:pointer;transition:all .15s;margin-bottom:.65rem;}
+.mc:hover{border-color:var(--acc);}
+.mc.sel{border-color:var(--acc);background:#E3EEF7;}
+.mc-t{font-size:13px;font-weight:700;color:var(--ink);}
+.mc-d{font-size:12px;color:var(--ink2);margin-top:2px;}
+.lscore{display:flex;gap:12px;background:var(--sf);border:1px solid var(--bd);border-radius:var(--r);padding:.6rem 1rem;margin-bottom:1rem;flex-wrap:wrap;}
+.ls{font-size:11px;color:var(--ink2);}
+.ls span{font-size:15px;font-weight:700;color:var(--ink);display:block;}
+.prog-t{height:4px;background:var(--sf2);border-radius:2px;margin-bottom:1.2rem;}
+.prog-f{height:4px;background:var(--acc);border-radius:2px;transition:width .3s;}
+.qcard{background:var(--sf);border:1px solid var(--bd);border-radius:var(--rl);padding:1.2rem;margin-bottom:.85rem;}
+.qmeta{display:flex;gap:5px;margin-bottom:.55rem;flex-wrap:wrap;align-items:center;}
+.qnum{font-size:11px;color:var(--ink3);}
+.badge{font-size:10px;padding:2px 6px;border-radius:8px;font-weight:700;background:#E3EEF7;color:var(--acc);}
+.tbadge{font-size:10px;padding:2px 6px;border-radius:8px;font-weight:700;background:#E3EEF7;color:var(--acc);}
+.qprompt{font-size:15px;font-weight:600;color:var(--ink);margin-bottom:.4rem;line-height:1.5;}
+.qhint{font-size:12px;color:var(--ink2);margin-bottom:.85rem;line-height:1.5;font-style:italic;}
+.opts{display:grid;gap:7px;}
+.obtn{text-align:left;background:var(--sf2);border:1.5px solid var(--bds);border-radius:var(--r);padding:9px 13px;font-size:13px;color:var(--ink);cursor:pointer;transition:all .15s;font-family:inherit;line-height:1.4;}
+.obtn:hover:not(:disabled){background:#ddd9d0;border-color:var(--acc);}
+.obtn.correct{background:var(--grn-l);border-color:var(--grn);color:var(--grn);font-weight:600;}
+.obtn.wrong{background:var(--red-l);border-color:var(--red);color:var(--red);}
+.obtn.reveal{background:var(--grn-l);border-color:var(--grn);color:var(--grn);}
+.frow{display:flex;gap:7px;flex-wrap:wrap;align-items:center;}
+.finp{flex:1;min-width:160px;padding:9px 12px;border:1.5px solid var(--bds);border-radius:var(--r);font-size:14px;font-family:inherit;background:var(--sf);color:var(--ink);outline:none;}
+.finp:focus{border-color:var(--acc);}
+.finp.correct{border-color:var(--grn);background:var(--grn-l);color:var(--grn);}
+.finp.wrong{border-color:var(--red);background:var(--red-l);color:var(--red);}
+.expl{font-size:12px;color:var(--ink2);margin-top:.65rem;padding:7px 11px;background:var(--sf2);border-radius:var(--r);border-left:3px solid var(--acc);display:none;line-height:1.6;}
+.eng-def{font-size:11px;color:var(--acc);background:#E3EEF7;border-radius:6px;padding:3px 9px;display:inline-block;margin-bottom:.5rem;font-style:italic;}
+.score-emoji{font-size:2.8rem;text-align:center;margin:.75rem 0 .25rem;}
+.score-big{font-size:3rem;font-weight:700;color:var(--acc);text-align:center;}
+.score-sub{font-size:13px;color:var(--ink2);text-align:center;margin-bottom:1.25rem;}
+.sgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(100px,1fr));gap:8px;margin-bottom:1.25rem;}
+.sbox{background:var(--sf);border:1px solid var(--bd);border-radius:var(--r);padding:.8rem;text-align:center;}
+.sbox .v{font-size:1.5rem;font-weight:700;color:var(--ink);}
+.sbox .l{font-size:11px;color:var(--ink2);margin-top:2px;}
+.ritem{background:var(--sf);border:1px solid var(--bd);border-radius:var(--r);padding:.85rem;margin-bottom:.5rem;border-left:3px solid var(--red);}
+.rword{font-size:13px;font-weight:700;}
+.rans{font-size:12px;margin-top:3px;line-height:1.55;}
+.cat-card{border:2px solid var(--bds);border-radius:var(--rl);overflow:hidden;cursor:pointer;transition:border-color .2s;}
+.cat-card:hover{border-color:var(--acc);}
+.cat-card.cat-active{border-color:var(--acc);}
+.cat-header{display:flex;align-items:center;justify-content:space-between;padding:.9rem 1rem;background:var(--sf2);gap:10px;}
+.cat-title{font-size:14px;font-weight:700;color:var(--ink);}
+.cat-desc{font-size:12px;color:var(--ink2);margin-top:2px;}
+.cat-arrow{font-size:13px;color:var(--acc);font-weight:700;flex-shrink:0;transition:transform .2s;}
+.cat-body{padding:.75rem .75rem .25rem;}
+.scr-zone{min-height:52px;border:2px dashed var(--bds);border-radius:var(--r);padding:8px;display:flex;flex-wrap:wrap;gap:6px;background:var(--sf);transition:border-color .2s;align-content:flex-start;}
+.scr-zone.correct-zone{border-color:var(--grn);background:var(--grn-l);}
+.scr-zone.wrong-zone{border-color:var(--red);background:var(--red-l);}
+.word-chip{padding:7px 13px;background:#fff;border:1.5px solid var(--bds);border-radius:20px;font-size:13px;color:var(--ink);cursor:pointer;user-select:none;transition:all .15s;font-family:inherit;line-height:1;}
+.word-chip:hover:not(:disabled){border-color:var(--acc);background:#E3EEF7;transform:translateY(-1px);}
+.word-chip.correct-chip{background:var(--grn-l);border-color:var(--grn);color:var(--grn);cursor:default;}
+.word-chip.wrong-chip{background:var(--red-l);border-color:var(--red);color:var(--red);}
+.scr-feedback{font-size:13px;margin-top:8px;font-weight:600;min-height:20px;}
+.scr-feedback.ok{color:var(--grn);}
+.scr-feedback.ng{color:var(--red);}
+.scr-key{font-size:12px;color:var(--ink2);font-style:italic;margin-top:5px;padding:6px 10px;background:var(--grn-l);border-radius:var(--r);border-left:3px solid var(--grn);}
+@media(max-width:480px){
+  .nav-title{font-size:12px;}
+  .nav-tab{padding:12px 10px;font-size:11px;}
+  .qprompt{font-size:14px;}
+  .obtn{font-size:13px;}
+}
+</style>
+</head>
+<body>
+<nav class="nav">
+  <span class="nav-title">EBS 수능특강 Q Jump 단어 Quiz</span>
+  <button class="nav-tab active" id="tab-btn-teacher">📋 Teacher</button>
+  <button class="nav-tab" id="tab-btn-student">🎯 Student</button>
+</nav>
+
+<!-- TEACHER PANEL -->
+<div class="panel active" id="panel-teacher">
+  <div class="card">
+    <div class="ct">EBS 수능특강 Q 미니모의고사 영어 Jump — 단어 Quiz</div>
+    <p style="font-size:13px;color:var(--ink2);line-height:1.7;margin-bottom:.85rem;">
+      B1+ level vocabulary, phrasal verbs, and idioms extracted from all 14회.<br>
+      Select rounds → choose columns → generate a printable Excel quiz sheet.
+    </p>
+    <div class="ct" style="margin-top:.5rem;">Select rounds</div>
+    <div class="qgrid" id="tq-grid"></div>
+    <div style="display:flex;gap:10px;margin-bottom:.5rem;">
+      <button class="lbtn" id="tq-all">Select all</button>
+      <button class="lbtn" id="tq-clr">Clear all</button>
+    </div>
+    <div class="ctr" id="tq-ctr">0 words selected</div>
+  </div>
+  <div class="card">
+    <div class="ct">Quiz columns</div>
+    <div class="opt-row">
+      <label class="ck"><input type="checkbox" id="t-ko" checked><span>① Korean meaning</span></label>
+      <label class="ck"><input type="checkbox" id="t-en"><span>② English word</span></label>
+      <label class="ck"><input type="checkbox" id="t-fi" checked><span>③ Fill in the blank</span></label>
+      <label class="ck"><input type="checkbox" id="t-po"><span>④ Part of speech</span></label>
+      <label class="ck"><input type="checkbox" id="t-ky" checked><span>Include answer key sheet</span></label>
+    </div>
+    <div style="margin-top:.5rem;">
+      <label style="font-size:13px;color:var(--ink2);">Class / 반:
+        <input type="text" id="t-cls" placeholder="e.g. 2-3반" style="width:130px;margin-left:6px;">
+      </label>
+    </div>
+    <div class="opt-row" style="margin-top:.65rem;">
+      <label class="ck"><input type="checkbox" id="t-sh" checked><span>Shuffle order</span></label>
+    </div>
+  </div>
+  <div class="brow">
+    <button class="btn btn-s" id="t-prev-btn">👁 Preview</button>
+    <button class="btn btn-g" id="t-gen-btn">⬇ Download Excel Quiz</button>
+  </div>
+  <div id="t-preview" style="overflow-x:auto;font-size:12px;"></div>
+  <div class="st" id="t-status"></div>
+</div>
+
+<!-- STUDENT PANEL -->
+<div class="panel" id="panel-student">
+  <div id="s-setup">
+    <div class="card">
+      <div class="ct">Select rounds</div>
+      <div class="qgrid" id="sq-grid"></div>
+      <div style="display:flex;gap:10px;margin-bottom:.5rem;">
+        <button class="lbtn" id="sq-all">Select all</button>
+        <button class="lbtn" id="sq-clr">Clear all</button>
+      </div>
+      <div class="ctr" id="sq-ctr">0 words selected</div>
+    </div>
+    <div class="card">
+      <div class="ct">Quiz type : <span style="font-size:11px;color:#000;font-weight:400;font-style:italic;text-transform:none;letter-spacing:0;">👆 Choose what to study!</span></div>
+      <div class="cat-card" id="cat-vocab" onclick="toggleCat('vocab')">
+        <div class="cat-header">
+          <div>
+            <div class="cat-title">① 📚 Vocabulary Quiz</div>
+            <div class="cat-desc">Word meaning, spelling &amp; definition quizzes</div>
+          </div>
+          <div class="cat-arrow" id="arrow-vocab">▼</div>
+        </div>
+        <div class="cat-body" id="body-vocab" style="display:none;">
+          <div class="mc sel" id="mode-mc"><div class="mc-t">Multiple choice 객관식 ⭐⭐</div><div class="mc-d">4 options — pick the correct Korean meaning</div></div>
+          <div class="mc" id="mode-w1"><div class="mc-t">✍️ Type 1 — Korean → English ⭐⭐⭐</div><div class="mc-d">See Korean meaning → type the English word</div></div>
+          <div class="mc" id="mode-w2"><div class="mc-t">✍️ Type 2 — Definition → English ⭐⭐⭐</div><div class="mc-d">See English definition → type the English word</div></div>
+        </div>
+      </div>
+      <div class="cat-card" id="cat-sent" onclick="toggleCat('sent')" style="margin-top:.6rem;">
+        <div class="cat-header">
+          <div>
+            <div class="cat-title">② 📝 Sentence Quiz</div>
+            <div class="cat-desc">Fill in blanks &amp; rebuild example sentences</div>
+          </div>
+          <div class="cat-arrow" id="arrow-sent">▶</div>
+        </div>
+        <div class="cat-body" id="body-sent" style="display:none;">
+          <div class="mc" id="mode-fi2"><div class="mc-t">✏️ Fill in the blank + 🇰🇷 ⭐⭐</div><div class="mc-d">Korean translation shown as scaffold</div></div>
+          <div class="mc" id="mode-fi"><div class="mc-t">✏️ Fill in the blank ⭐⭐⭐</div><div class="mc-d">Type the missing word — no Korean hint</div></div>
+          <div class="mc" id="mode-scr"><div class="mc-t">🔀 Sentence Scramble ⭐⭐⭐⭐⭐</div><div class="mc-d">Click words to rebuild the sentence in order</div></div>
+          <div class="mc" id="mode-scr2"><div class="mc-t">🌈 Medium Scramble ⭐⭐⭐</div><div class="mc-d">Words colour-coded by part of speech as a hint</div></div>
+          <div class="mc" id="mode-scr3"><div class="mc-t">🧩 Easy Scramble — Chunks ⭐⭐</div><div class="mc-d">Arrange meaningful phrase chunks in the right order</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="ct">Options</div>
+      <div class="opt-row">
+        <label class="ck"><input type="checkbox" id="s-sh" checked><span>Shuffle questions</span></label>
+        <label class="ck"><input type="checkbox" id="s-rv"><span>Show explanation after each answer</span></label>
+      </div>
+      <div style="margin-top:.6rem;font-size:13px;color:var(--ink2);">
+        Name: <input type="text" id="s-name" placeholder="이름을 입력하세요 *" style="width:180px;margin-left:6px;border:1.5px solid var(--bds);" required>
+        <span style="font-size:11px;color:var(--red);margin-left:4px;">* 필수</span>
+      </div>
+    </div>
+    <button class="btn btn-g" id="s-start" style="width:100%;padding:13px;font-size:15px;">Start Quiz →</button>
+    <div class="st" id="s-status"></div>
+  </div>
+
+  <div id="s-quiz" style="display:none;">
+    <div class="lscore">
+      <div class="ls"><span id="ls-c">0</span>Correct ✓</div>
+      <div class="ls"><span id="ls-w">0</span>Wrong ✗</div>
+      <div class="ls"><span id="ls-r">—</span>Left</div>
+      <div class="ls"><span id="ls-p">—</span>Score</div>
+    </div>
+    <div class="prog-t"><div class="prog-f" id="prog" style="width:0%"></div></div>
+    <div id="q-container"></div>
+    <div class="brow" style="margin-top:1rem;">
+      <button class="btn btn-s" id="s-reveal">Reveal all</button>
+      <button class="btn btn-p" id="s-results">See results →</button>
+    </div>
+  </div>
+
+  <div id="s-score" style="display:none;">
+    <div class="card">
+      <div style="text-align:right;margin-bottom:.25rem;">
+        <span id="sc-tasktype" style="font-size:11px;font-weight:700;padding:3px 10px;border-radius:12px;background:#E3EEF7;color:#1A3A5C;"></span>
+      </div>
+      <div class="score-emoji" id="sc-emoji"></div>
+      <div class="score-big" id="sc-pct"></div>
+      <div class="score-sub" id="sc-sub"></div>
+      <div style="font-size:12px;color:var(--ink3);text-align:center;margin-bottom:.75rem;" id="sc-datetime"></div>
+      <div id="sc-encourage" style="font-size:13px;font-weight:600;padding:10px 14px;border-radius:10px;text-align:center;margin-bottom:1rem;border:1.5px solid;"></div>
+      <div class="sgrid" id="sc-grid"></div>
+    </div>
+    <div class="card">
+      <div class="ct">Wrong answers — review</div>
+      <div id="sc-review"></div>
+    </div>
+    <div class="brow">
+      <button class="btn btn-p" id="sc-retry">Try again ↺</button>
+      <button class="btn btn-s" id="sc-new">New quiz</button>
+      <button class="btn btn-s" id="sc-print" onclick="printResult()" style="background:#1E6B3C;color:#fff;border-color:#1E6B3C;">🖨 Save / Print</button>
+    </div>
+  </div>
+</div>
+
+<script>
+var WL=[
+// ─── 01회 ───────────────────────────────────────────────────────────────
+["credentials","n.","자격, 자격 증명서","I have interviewed several other candidates with substantial editorial credentials.","01회"],
+["hesitancy","n.","망설임, 주저함","I reflected at length on your hesitancy to demonstrate your editorial approach to analytical topics.","01회"],
+["prerequisite","n.","필수 조건","Analytical skills and technical knowledge are an important prerequisite for the job.","01회"],
+["reflect at length on","phrasal v.","~에 대해 충분히 생각하다","I have reviewed your work and reflected at length on our last conversation.","01회"],
+["be convinced that","phrasal v.","~을 확신하게 되다","I have become convinced that analytical skills and technical knowledge are an important prerequisite for the job.","01회"],
+["frankly","adv.","솔직히 말해서","My conclusion is that your background is not appropriate for the position and, frankly, that you would not enjoy the job.","01회"],
+["regret","v.","유감으로 생각하다","I regret that we must make this decision.","01회"],
+["protein","n.","단백질","A cell contains millions of proteins that are continuously built up and broken down by the cell.","01회"],
+["recycle","v.","재활용하다, 재순환되다","Proteins are continuously recycled, but this recycling process does not always run smoothly.","01회"],
+["cluster together","phrasal v.","함께 뭉치다, 군집하다","Proteins also tend to cluster together, so that unbreakable protein clumps eventually fill up the cell.","01회"],
+["aggregated","adj.","응집된","Our cells become so filled with aggregated proteins that they no longer function well.","01회"],
+["clump","n.","덩어리","Unbreakable protein clumps eventually fill up the cell.","01회"],
+["strangle","v.","질식시키다","Finally, many cells simply die, strangled in a web of proteins.","01회"],
+["contract","v.","수축하다","Heart cells no longer contract properly as cells age.","01회"],
+["transmit","v.","전달하다","Nerve cells do not transmit signals efficiently as cells become filled with aggregated proteins.","01회"],
+["registration","n.","등록비","The table shows the average annual family spending on registration, equipment, and lessons per sport.","01회"],
+["dedicated","adj.","헌신적인","All the great social reforms began with the dedicated campaigns of a handful of people who saw something wrong.","01회"],
+["consistent campaigning","n. phrase","일관된 캠페인","As a result of consistent campaigning, the slave trade was made illegal near the beginning of the nineteenth century.","01회"],
+["stick to","phrasal v.","고수하다, 지키다","Social psychologists showed that if just a few people stick to a particular view they are convinced are right, they can have great influence.","01회"],
+["be convinced are right","phrasal v.","옳다고 확신하는","If just a few people stick to a particular view which they are convinced are right, then over time they can have a great deal of influence.","01회"],
+["genuine","adj.","진실된, 진정한","Those people trying to influence the majority should be seen to be genuine, consistent and resisting social pressure.","01회"],
+["resisting social pressure","phrasal v.","사회적 압력에 저항하는","Those who are in the minority and trying to influence the majority should be seen to be genuine, consistent and resisting social pressure.","01회"],
+["constrict","v.","수축하다, 좁아지다","Over the centuries, notions of privacy have constricted in reaction to advancing technology.","01회"],
+["invasion of privacy","n. phrase","사생활 침해","Taking people's pictures in public spaces without permission is not a legal invasion of privacy.","01회"],
+["utterance","n.","발언, 말","Physical form and any utterance, transaction, or expression is accessible by unknown members of a mass audience.","01회"],
+["voluntarily ventures out","phrasal v.","자발적으로 외출하다","Public space is traditionally considered to be space where an individual voluntarily ventures out.","01회"],
+["retrieve","v.","가져오다, 되찾다","One may not expect to be captured by Google Maps while retrieving the morning paper from the front steps.","01회"],
+["consent to be viewed","phrasal v.","보여지는 것에 동의하다","Going out into public in the physical world provides consent to be viewed.","01회"],
+["serotonin","n.","세로토닌","When you act with kindness, your brain increases its serotonin level going into your system.","01회"],
+["ward off illness","phrasal v.","병을 예방하다","With acts of kindness, you feel good and you ward off illness.","01회"],
+["immediate vicinity","n. phrase","바로 근처, 주변","The person who is the recipient of the act of kindness also feels an increase in serotonin, as does everyone in the immediate vicinity.","01회"],
+["bigotry","n.","편협함, 고집","If we all performed one little act of kindness each day, eventually we would have a world at peace and free of bigotry.","01회"],
+// ─── 02회 ───────────────────────────────────────────────────────────────
+["pounding","adj.","세차게 뛰는","Her heart was pounding a hundred miles an hour as she reached down and pulled the beast off her leg.","02회"],
+["wrap itself around","phrasal v.","~을 감싸다","Something wrapped itself around Anna's ankle.","02회"],
+["freed from the fright","adj. phrase","공포에서 벗어나","Freed from the fright and the potential monster and now knowing where the river was, Anna ran as fast as the tall grass would allow.","02회"],
+["sensibility","n.","감수성, 감각","Through the paintings he produces the painter shows his subject as much as his own sensibility.","02회"],
+["trite","adj.","진부한","It may sound rather trite to say that the first function of the picture is to show its object.","02회"],
+["underlying message","n. phrase","내재된 메시지","Visual art includes the underlying message of its creator — behind the open door several differences are hidden.","02회"],
+["be accompanied by","phrasal v.","~을 동반하다","It is very rare that the picture isn't accompanied by a comment that specifies its meaning or context.","02회"],
+["myth","n.","신화","We tend to think of myths as rather silly old stories about the adventures and misadventures of gods, warriors, and demons.","02회"],
+["dismiss","v.","무시하다","It is a mistake to dismiss these stories as trivial and old-fashioned.","02회"],
+["universal concerns","n. phrase","보편적인 관심사","Common themes in myths from many diverse cultures speak to us about the universal concerns of all people.","02회"],
+["psyche","n.","심리, 정신","The systematic study of mythology reveals important points about the human psyche.","02회"],
+["brainchild","n.","아이디어, 창안물","Pi Day was the brainchild of Larry Shaw, a physicist at the San Francisco Exploratorium.","02회"],
+["pass a resolution","phrasal v.","결의안을 통과시키다","In 2009, the US House of Representatives passed a resolution recognising 14 March as National Pi Day.","02회"],
+["recite","v.","암송하다","Pi Day involves competitions to memorise and recite as many of the digits of π as possible.","02회"],
+["correspond to","phrasal v.","~에 상응하다","Pi Day in 2015 was particularly significant because the date corresponded to the first five digits of π, 3.1415.","02회"],
+["fabrication","n.","꾸며낸 것, 허구","I realized that my story of what lay beyond the hill was a fabrication in my mind.","02회"],
+["ascribe reality to","phrasal v.","~에 실재를 부여하다","The only reason I ascribe any reality to my imagination is that the next hill always appears when I get to the top of this one.","02회"],
+["crest","v.","꼭대기에 오르다","Surely I would know in a minute or so, when my car crested the hill.","02회"],
+["verified by a future observation","phrasal v.","미래의 관찰에 의해 검증된","My assumption that the next hillside exists is always verified, but it is verified by a future observation.","02회"],
+["correlation","n.","상관관계","Evidence is mounting that there is indeed a correlation between screen time and attention deficit disorders.","02회"],
+["dopamine reward circuit","n. phrase","도파민 보상 회로","The reason a child can focus on a screen for extended periods of time is because the dopamine reward circuit is being activated.","02회"],
+["gratifying","adj.","만족스러운","The reason a child can focus on a screen is because the dopamine reward circuit is being activated, which is very gratifying.","02회"],
+["attention deficit","n. phrase","주의력 결핍","Young people who spend extended periods of time staring into screens are more likely to develop attention deficits later on in life.","02회"],
+["overloading of working memory","n. phrase","작업 기억 과부하","There are studies that link ADD to the overloading of working memory.","02회"],
+["self-regulation","n.","자기 조절","If you or someone you know suffers from ADHD, you know how difficult self-regulation or self-control can be.","02회"],
+// ─── 03회 ───────────────────────────────────────────────────────────────
+["perpetual marathon","n. phrase","끝없는 마라톤","Knowledge has no finish line. Instead, as with life, it is merely a perpetual marathon full of potential and pitfalls.","03회"],
+["gloat","v.","뽐내다, 우쭐대다","The true intellectual does not gloat in what she knows.","03회"],
+["pitfall","n.","위험, 함정","Knowledge has no finish line — it is merely a perpetual marathon full of potential and pitfalls.","03회"],
+["humbly","adv.","겸허하게","Intellect is not to be celebrated; it should be constantly and humbly improved.","03회"],
+["tackle","v.","다루다, 도전하다","An infinite amount of new topics remain alive and waiting to be tackled.","03회"],
+["regression to the mean","n. phrase","평균으로의 회귀","The jinx is in all probability due to what statisticians call regression to the mean.","03회"],
+["jinx","n.","징크스, 불운","Seeking explanation for change, it is easy to attribute ups and downs to some special cause such as a jinx.","03회"],
+["spectacular","adj.","눈부신, 멋진","A spectacular season of home runs is seldom beaten next year.","03회"],
+["deliberative democrat","n. phrase","숙의 민주주의자","Deliberative democrats want to ensure rule by free and equal citizens, so they refuse to honor traditions as such.","03회"],
+["unalterable","adj.","바꿀 수 없는","A self-governing citizenry does not take existing preferences and beliefs as unalterable, as natural, or as 'givens'.","03회"],
+["inculcate","v.","심어주다, 주입하다","Deliberative democrats are disapproving of social practices that inculcate beliefs that threaten free and equal citizenship.","03회"],
+["subjecting to reasoned arguments","phrasal v.","합리적 논거에 종속시키는","A central point of deliberation is to shape both preferences and beliefs by subjecting them to reasoned arguments.","03회"],
+["rationale","n.","이유, 근거","Parents sometimes try to justify a child's bad behavior with the rationale, 'Robert was running around with the wrong crowd.'","03회"],
+["collectively","adv.","집단적으로","Crowds sometimes do things collectively that the individual members may not do by themselves.","03회"],
+["individuals influence and are influenced by","phrasal v.","개인은 영향을 주고받는다","Friends, associates, crowds/groups are choices, and individuals influence and are influenced by those who make up the group.","03회"],
+["post-industrial","adj.","탈산업화된","In a post-industrial society, the average family can no longer be self-sufficient.","03회"],
+["self-sufficient","adj.","자급자족하는","In a post-industrial society, the average family can no longer be self-sufficient.","03회"],
+["arsenal","n.","무기고, 수단","This industrialized world requires secondary knowledge, which cannot be acquired with nothing but primary abilities in one's arsenal.","03회"],
+["pour out her story","phrasal v.","이야기를 쏟아놓다","I guess she saw the genuine empathy in my eyes, as she proceeded to pour out her story.","03회"],
+["deluge","v.","밀려들다","She allowed the flood of grief for her sister to deluge her, to the point where she abandoned her inhibitions.","03회"],
+["shoulder to cry on","idiom","하소연할 수 있는 사람","Somebody else had just for a moment reached out to her and provided a shoulder for her to cry on.","03회"],
+["elicit a polite rebuttal","phrasal v.","정중한 거절을 이끌어내다","Rather than asking if everything was OK, which would probably have elicited a polite rebuttal, I sat down next to her.","03회"],
+// ─── 04회 ───────────────────────────────────────────────────────────────
+["exclusively","adv.","독점적으로","Our policy is to sell our medications for pets exclusively to licensed veterinarians.","04회"],
+["unauthorized sources","n. phrase","비공인 판매처","I encourage you not to purchase our products through unauthorized sources.","04회"],
+["proper handling","n. phrase","적절한 취급","We do not know how our products reach these businesses, so we can't ensure that proper handling occurs.","04회"],
+["cascading chain of events","n. phrase","연속적인 사건의 연쇄","One decision leads to another, creating a cascading chain of events.","04회"],
+["alter a choice","phrasal v.","선택을 바꾸다","If you are feeling yourself getting stuck in an unhappy environment, alter a choice you make day after day.","04회"],
+["subconsciously","adv.","무의식적으로","Research shows that adults make approximately 35,000 decisions a day, both consciously and subconsciously.","04회"],
+["chain reaction","n.","연쇄 반응","Deciding to smile at your coworkers as you walk past them could lead to a chain reaction that leads to an improvement.","04회"],
+["dissemination","n.","보급, 전파","The music industry and the media are crucial actors for the dissemination of musical tracks.","04회"],
+["appropriated by","phrasal v.","~에 의해 전용된","The meaning of certain genres varies in time and space, depending on the way it is appropriated by people.","04회"],
+["modeling","n.","모범 보이기","It is important to remember that modeling helps set the stage for healthy self-esteem or problems with it.","04회"],
+["immaturity","n.","미성숙함","Given the immaturity of children, parents' expression of their own resolution of the self-esteem question is far more influential.","04회"],
+["pro-self-esteem problem-solving strategy","n. phrase","자존감을 높이는 문제 해결 전략","Parents who face life's challenges honestly expose their children early to a pro-self-esteem problem-solving strategy.","04회"],
+["inherent reason","n. phrase","내재된 이유","Our prospective fate is less about the threat of an evil robot army and more about the fact that AI has no inherent reason to share human goals.","04회"],
+["align with","phrasal v.","~와 일치하다","Unless we design AI in alignment with our highest aspirations, the priorities of thinking machines may be totally alien to us.","04회"],
+["algorithmic sense of virtue","n. phrase","알고리즘적 덕목의 감각","Even if we manage to design AI that shares our most precious values and install within it an algorithmic sense of virtue, there is no guarantee it won't abandon those ideals.","04회"],
+["hoe","n.","괭이","Extra energy from farming could be used to plow the land more deeply than handheld hoes could.","04회"],
+["haulage","n.","화물 수송","Farmers who let horses and oxen graze and then used them for haulage were tapping into the large flows of photosynthetic energy through grasslands.","04회"],
+["flax","n.","아마(亞麻)","Farmers could increase the production of plants that had other uses besides food, such as flax and cotton.","04회"],
+["tapping into","phrasal v.","활용하다","Farmers who used horses and oxen were tapping into the large flows of photosynthetic energy through grasslands.","04회"],
+["paradigm","n.","모범적인 예","A tragedy offers those situations-cum-emotions as paradigms, and so teaches us how to handle situations of failure and suffering.","04회"],
+["situations-cum-emotions","n. phrase","감정과 결합된 상황","A good tragedy offers those situations-cum-emotions as paradigms.","04회"],
+["educate our emotions","phrasal v.","우리의 감정을 교육하다","Participating in a worthwhile drama, like reading literature, educates our emotions.","04회"],
+// ─── 05회 ───────────────────────────────────────────────────────────────
+["swallow my pride","idiom","자존심을 죽이다, 자존심을 삼키다","I hesitantly decided that I would swallow my pride and go to her with my first draft.","05회"],
+["contrary to my expectation","idiom","나의 예상과는 달리","Contrary to my expectation, when I sat down with her, she was actually really encouraging.","05회"],
+["docked points","phrasal v.","점수를 깎이다","She even helped me with the format so I wouldn't get docked points on that.","05회"],
+["took a lot of courage and guts","idiom","많은 용기가 필요했다","Though it took a lot of courage and guts for me to enter that office, I'm so glad I did.","05회"],
+["vintage technology","n. phrase","구형 기술","There are some people who have developed a taste for 'vintage' technology.","05회"],
+["renouncement","n.","포기, 단념","None of these cases reveal an ultimate or total renouncement of technology, but rather a temporary interruption of its use.","05회"],
+["slow movement","n. phrase","슬로우 무브먼트 (느린 삶 운동)","We consider it appropriate to include in this list the so-called slow movement, with its taste for slowness and tranquility.","05회"],
+["refrain from","phrasal v.","~을 삼가다","Many forms of meditation can be seen as a way to temporarily refrain from technology.","05회"],
+["practice a form of technological silence","phrasal v.","기술적 침묵을 실천하다","Whoever chooses slowness may indeed practice a form of technological silence.","05회"],
+["violation of anticipation","n. phrase","기대의 위반","The story becomes funny when the third man violates our expectations — this violation of anticipation is an element of a joke.","05회"],
+["activate knowledge","phrasal v.","지식을 활성화하다","When hearing this joke, we activate our knowledge about genies granting three wishes.","05회"],
+["false assumption","n. phrase","잘못된 가정","We are amused that we made a false assumption of only one ending.","05회"],
+["apprenticeship","n.","도제 생활","After his apprenticeship as a mercer, Caxton moved to Bruges.","05회"],
+["mercer","n.","포목상","After his apprenticeship as a mercer, Caxton moved to Bruges.","05회"],
+["foremost center for trade","n. phrase","가장 중요한 무역 중심지","Bruges was the foremost center for trade between the English and the Flemish.","05회"],
+["presumably","adv.","아마도, 추정컨대","In 1471, presumably after resigning his office, Caxton went to Cologne.","05회"],
+["dogness","n. phrase","'개다움', 본질적 개념","Abstraction enriches meaning by helping you to see just what is essential about, for instance, 'dogness'.","05회"],
+["abstraction","n.","추상화","People often think of abstraction as stripping away meaning, but in fact abstraction does the opposite — it enriches meaning.","05회"],
+["enrich meaning","phrasal v.","의미를 풍부하게 하다","Abstraction does the opposite of stripping away meaning — it enriches meaning.","05회"],
+["slang substitution","n. phrase","속어 대체","Around the 1980s, some adolescents substituted the word bad for good — a slang substitution of meaning.","05회"],
+["cacophony","n.","불협화음","An insect in the rainforests of Southeast Asia has a penetrating cry heard above the cacophony of other insects.","05회"],
+["dappled","adj.","(햇빛과 그림자로) 아롱진","Being seen as well as heard is a special problem in forests because only certain visual signals can be seen easily in the dappled light.","05회"],
+["camouflage","v./n.","위장하다; 위장","Zebras are actually camouflaged by their black and white stripes when they stand still in dappled light.","05회"],
+["penetrating cry","n. phrase","꿰뚫는 울음소리","An insect in the rainforests of Southeast Asia has a penetrating cry heard above the cacophony of other insects as a sharp, higher frequency.","05회"],
+// ─── 06회 ───────────────────────────────────────────────────────────────
+["model responsible use","phrasal v.","책임 있는 사용의 모범을 보이다","You have to model responsible use of digital devices.","06회"],
+["regulate technology use","phrasal v.","기술 사용을 조절하다","Talk to your kids about the universal struggle to regulate technology use, including your own.","06회"],
+["stash out of sight","phrasal v.","보이지 않는 곳에 숨겨두다","She gave her smartphone to her husband to stash out of sight.","06회"],
+["nurturance","n.","양육, 돌봄","Human beings are born in an 'unfinished' condition, incapable even of survival without a long period of nurturance under the protective guidance of elders.","06회"],
+["destitute","adj.","궁핍한","Rousseau declared: 'We are born entirely destitute, we need help.'","06회"],
+["keen learners","n. phrase","열심히 배우는 사람들","Fortunately, we are also uncommonly keen learners.","06회"],
+["obligation to learn","n. phrase","배움의 의무","The obligation to learn is primal: not only to thrive, but simply to survive.","06회"],
+["shroud","v.","뒤덮다","We must escape the profound ignorance that shrouds us at our birth.","06회"],
+["government-subsidized","adj.","정부 보조금을 받는","The rich countries fear they will be flooded with cheap imports from government-subsidized companies.","06회"],
+["level playing field","n. phrase","공평한 경쟁의 장","Rich countries have demanded 'a level playing field', pressuring developing countries to abandon government support.","06회"],
+["bankrupt","v.","파산시키다","Cheap imports will bankrupt many of their own companies and cause widespread job loss.","06회"],
+["prioritization scheme","n. phrase","우선순위 방식","In aviation, we use a simple prioritization scheme: 'aviate, navigate, communicate.'","06회"],
+["aviate","v.","비행하다, 조종하다","In aviation, we use a simple prioritization scheme: 'aviate, navigate, communicate.' That means we fly the airplane first.","06회"],
+["adage","n.","격언","Pilots have a technique founded on the old adage of 'first things first.'","06회"],
+["admit you can't do two things at once","phrasal v.","동시에 두 가지를 할 수 없음을 인정하다","When you're asked to do two things, don't be afraid to admit you can't do two things at once.","06회"],
+["summon","v.","소환하다, 부르다","The wise king summoned the prince one day and said, 'You are no longer a prince.'","06회"],
+["radiant","adj.","빛나는","The man was totally changed — his face became radiant, eyes reflecting the princely majesty.","06회"],
+["experience the extremes of life","phrasal v.","삶의 극단을 경험하다","The king said: 'It was not done to harm you, but to give you experience of the extremes of life — the beggar and the king.'","06회"],
+["inhibitions","n.","억제, 거리낌","She abandoned her inhibitions and cried her heart out in such a public place.","06회"],
+["norms make our interactions predictable","phrasal v.","규범은 우리의 상호작용을 예측 가능하게 한다","Norms make our interactions with others reasonably predictable.","06회"],
+["hearty handshake","n. phrase","활기찬 악수","A hearty handshake in some societies may be interpreted as an insult.","06회"],
+// ─── 07회 ───────────────────────────────────────────────────────────────
+["medically impaired","adj. phrase","의학적으로 장애가 있는","We need to verify that his mobility is medically impaired.","07회"],
+["designated collection points","n. phrase","지정된 수거 지점","We provide a special service to residents who are physically unable to place their waste at designated collection points.","07회"],
+["consent","n.","동의","With his consent, we would like to request that you provide medical documentation of Mr. Smith's physical impairment.","07회"],
+["vanity","n.","허영심","Most of the industry is driven by vanity and offers nothing more than the chance to appear younger.","07회"],
+["unprecedented heights","n. phrase","전례 없는 수준","Putting a price on the holy grail for longer life will doubtlessly take the pharmaceutical industry to unprecedented heights.","07회"],
+["leap forward","phrasal v.","도약하다","AI is making a huge leap forward in pharmaceutical research by discovering ways to slow down or even reverse biological processes such as ageing.","07회"],
+["glimpse","n.","짧은 엿봄","The enormous profits of the beauty industry provide a glimpse of the even larger potential market for extending human longevity.","07회"],
+["hierarchical power","n. phrase","위계적 권력","With volunteers, supervisors cannot rely on hierarchical power to gain compliance and cooperation.","07회"],
+["persuasion and relationship","n. phrase","설득과 관계","Instead of relying on hierarchical power, supervisors must use powers of persuasion and relationship.","07회"],
+["allocation of resources","n. phrase","자원의 배분","In environmental economics, the allocation of resources over a long period is critical.","07회"],
+["irreversible","adj.","돌이킬 수 없는","Our consumption decisions of some environmental goods may be 'irreversible' and may have a profound impact on the well-being of future generations.","07회"],
+["well-being of future generations","n. phrase","미래 세대의 복지","Burning fossil fuels today may create problems for future generations — our decisions can have a profound impact on the well-being of future generations.","07회"],
+["jerk around","phrasal v.","~을 뒤흔들다","Producers of children's shows jerk children's attention around using perceptual tricks, which can lead to a shortening of children's attention spans.","07회"],
+["sensory bombardment","n. phrase","감각적 공격","The TV set holds our attention by a constant sensory bombardment that maximizes orienting responses.","07회"],
+["passive","adj.","수동적인","Children eventually give in and go with the flow, becoming passive.","07회"],
+["another thing will come along and replace","phrasal v.","다른 것이 나타나 대체할 것이다","Children become passive, thinking it is useless to try to analyze any one thing because another thing will come along and replace the first thing.","07회"],
+["red-green colour blindness","n. phrase","적녹 색맹","Imagine having had red-green colour blindness from birth and then putting on glasses that enabled you to see colours in their correct wavelengths.","07회"],
+["corrective glasses","n. phrase","교정 안경","Such corrective glasses for colour blindness do exist.","07회"],
+["wept at the bright clarity","phrasal v.","밝고 선명한 색에 눈물을 흘렸다","A man in his fifties who received corrective glasses wept at the bright clarity of the colours.","07회"],
+["decoy effect","n. phrase","미끼 효과","A simple example of the decoy effect is a study run by the magazine National Geographic.","07회"],
+["lure people into choosing","phrasal v.","사람들을 유혹하여 선택하게 하다","The decoy lured people into choosing the most expensive option over the less expensive option they would have chosen had the decoy not been there.","07회"],
+["rational choice","n. phrase","합리적인 선택","The majority of consumers opted for the large bucket because it seemed like a rational choice.","07회"],
+["diversified","adj.","다양화된","Over the past decades, the media environment has become more diversified, which has led to the breakup of communities that enjoy popular culture together.","07회"],
+["fragmented viewing audiences","n. phrase","분산된 시청자","Cable television, the VCR, and the DVD player all had a role in fragmenting viewing audiences for film and television.","07회"],
+// ─── 08회 ───────────────────────────────────────────────────────────────
+["proposition","n.","제안, 명제","Your consideration of this proposition would be much appreciated.","08회"],
+["splash park","n. phrase","물놀이 공원","A splash park would provide kids with a convenient place to get exercise and stay cool in hot summer.","08회"],
+["drawback","n.","단점, 결점","A major drawback of oral communication is that it cannot be erased.","08회"],
+["finality","n.","최종성, 불변성","There is a sense of finality concerning the spoken word.","08회"],
+["uttered","adj.","발설된","Any word uttered by the speaker travels swiftly and reaches the target.","08회"],
+["slip of the tongue","idiom","말실수","Any slip of the tongue can create an embarrassment and an unintended hurt.","08회"],
+["acutely conscious of","phrasal v.","~을 예민하게 의식하는","Effective speakers are acutely conscious of this factor.","08회"],
+["speaking with restraint","phrasal v.","절제하여 말하기","Until the fine art of speaking with restraint is developed, it would be desirable to make speeches well thought out.","08회"],
+["well thought out","adj. phrase","충분히 숙고된","It would be desirable to make the speeches and interventions structured and well thought out rather than spontaneous and extempore.","08회"],
+["rubbed his ego the wrong way","idiom","그의 자존심을 건드렸다","Were he unable to admit that his coworker's success rubbed his ego the wrong way, he may have felt tempted to attack her.","08회"],
+["reflective","adj.","성찰적인","A reflective person has access to his inner motives, feelings, and thoughts.","08회"],
+["aversion","n.","반감, 혐오","He'll recognize that the aversion he feels toward his coworker isn't actually because she's supposedly unfriendly.","08회"],
+["green-eyed monster","idiom","질투심","He'll manage to regulate his green-eyed monster internally.","08회"],
+["verbal jabs","n. phrase","언어적 공격","He may have felt tempted to attack her with a few verbal jabs to cut her down — even in front of others.","08회"],
+["get defensive","phrasal v.","방어적이 되다","Most people get defensive when they are labeled, even when sure they are not 'wrong.'","08회"],
+["block messages","phrasal v.","메시지를 차단하다","Defensive people block messages, making criticism an ineffective communication strategy.","08회"],
+["assign to a status","phrasal v.","~의 지위를 부여하다","When we criticize, we are likely to assign others to a specific, potentially harmful status.","08회"],
+["quest for publicity","n. phrase","명성 추구","The search for publicity is, at heart, a quest for a shortcut to friendship.","08회"],
+["reciprocal connections","n. phrase","호혜적인 유대","Real kindness is the fruit of a few intimate and reciprocal connections.","08회"],
+["contented life","n. phrase","만족스러운 삶","Being entirely forgotten by the world is the very basis for a contented and safe life.","08회"],
+["swap the prospect of","phrasal v.","~의 전망을 교환하다","One swaps the prospect of followers and mean-minded detractors for the deeper satisfaction of true friends.","08회"],
+["tourist trap","n. phrase","관광객 바가지 장소","A few smart tourists soon learn to get away from these 'tourist traps' to find better deals.","08회"],
+["locational price differences","n. phrase","위치적 가격 차이","In sum, locational price differences are generally not considered price discrimination.","08회"],
+["price discrimination","n. phrase","가격 차별","Locational price differences are generally not considered price discrimination.","08회"],
+["visually literate","adj. phrase","시각적 리터러시가 있는","Students should become critical, visually literate 'readers' of movie texts.","08회"],
+["ideological points-of-view","n. phrase","이념적 관점","Students should learn to move beyond the entertainment value of film to the ideological points-of-view embedded in cinema.","08회"],
+["challenge cultural biases","phrasal v.","문화적 편견에 도전하다","Students can understand and challenge their own sense of self and worldview by expanding their informational bases and dispelling misconceptions.","08회"],
+["dispel misconceptions","phrasal v.","오해를 불식시키다","We must endeavor to offer ways that students can dispel misconceptions in media portrayals.","08회"],
+// ─── 09회 ───────────────────────────────────────────────────────────────
+["triumphantly","adv.","의기양양하게","He walked triumphantly towards me, bowed, and asked me for a dance.","09회"],
+["overjoyed","adj.","매우 기쁜","Feeling overjoyed, I felt as though everything around me had suddenly disappeared.","09회"],
+["surge of progress","n. phrase","급격한 진보","The recent surge of progress in artificial intelligence may suggest that we have finally discovered how to copy human intelligence.","09회"],
+["self-proclaimed prophets","n. phrase","자칭 예언자들","According to some self-proclaimed prophets, machines are about to overtake us.","09회"],
+["surpass","v.","능가하다","The recent surge of progress in AI may suggest that we have finally discovered how to copy and even surpass human learning and intelligence.","09회"],
+["artificial neural networks","n. phrase","인공 신경망","Most artificial neural networks implement only the operations that our brain performs unconsciously.","09회"],
+["formulate symbolic representations","phrasal v.","상징적 표현을 구성하다","Our brain is able to explore the image consciously and formulates symbolic representations and explicit theories of the world.","09회"],
+["solitary","adj.","혼자 지내는, 독거의","Kakapos are generally solitary, although conservation workers have reported that they seem to enjoy the company of humans.","09회"],
+["undergrowth","n.","덤불, 하층 식생","They spend much of the day hidden from sight in the undergrowth.","09회"],
+["clamber","v.","힘겹게 기어 올라가다","At night they come out to feed, clambering around in the tree tops.","09회"],
+["vegetarian","adj.","초식성의","As the kakapo is mainly vegetarian, it does not need to run to pursue prey.","09회"],
+["comical rolling gait","n. phrase","우스운 뒤뚱거리는 걸음걸이","The kakapo can walk with an almost comical, rolling gait at surprising speeds.","09회"],
+["post-rationalisation","n.","사후 합리화","The story behind the launch of the first cake mix powders is a perfect example of post-rationalisation.","09회"],
+["meagre sales","n. phrase","변변찮은 판매량","The product in question started off with very meagre sales.","09회"],
+["projective technique","n. phrase","투사법","The projective technique showed that the underlying factor making it difficult for housewives to accept the product was their unconscious belief.","09회"],
+["negative implicit attitude","n. phrase","부정적인 암묵적 태도","The 'artificial taste' opinion was a typical post-rationalisation of a negative implicit attitude towards the product.","09회"],
+["pesticide","n.","농약, 살충제","Pesticides of various types are used in most sectors of the U.S. economy.","09회"],
+["toxicity","n.","독성","These economic benefits from pesticide use are not achieved without potential risks due to the toxicity of pesticide chemicals.","09회"],
+["regulate under federal law","phrasal v.","연방법에 따라 규제하다","These chemicals are regulated under federal or state pesticide laws to avoid unacceptable risks.","09회"],
+["semiotic","adj.","기호학의","From a semiotic perspective, designers can work with intentionally charging the design object with surprising moments and ambiguous signals.","09회"],
+["ambiguous signals","n. phrase","모호한 신호","Designers can work with intentionally charging the design object with surprising moments and ambiguous signals.","09회"],
+["prolong the decoding process","phrasal v.","해독 과정을 연장하다","Charging a design with ambiguous signals prolongs the time it takes the recipient to decode the object.","09회"],
+// ─── 10회 ───────────────────────────────────────────────────────────────
+["bird feeder","n. phrase","새 먹이통","In the US, species that use bird feeders most frequently tend to be doing just as well as species that use them more sporadically.","10회"],
+["clutch size","n. phrase","한배 알의 수","Some studies suggest that winter feeding can have a negative effect on breeding performance, decreasing clutch size and breeding success.","10회"],
+["migratory behaviour","n. phrase","이주 행동","Feeders also change the evolution of birds, selecting for longer bills and changing migratory behaviour.","10회"],
+["non-refundable","adj.","환불 불가인","Full payment is due upon registration. Payments are non-refundable.","10회"],
+["applied objectives","n. phrase","응용적 목적","Generally, advertising research has applied objectives — to help stimulate sales of specific products or services.","10회"],
+["manipulate people","phrasal v.","사람들을 조종하다","Advertising research, aimed at discovering how to manipulate people, has aroused considerable criticism.","10회"],
+["cause-and-effect relationship","n. phrase","인과 관계","Critics claim that no scientific cause-and-effect relationship can be established between a given ad and the product it seeks to sell.","10회"],
+["social legitimization of sickness","n. phrase","질병의 사회적 정당화","Seeking confirmation of illness from family or friends is a major step in the social legitimization of the sickness.","10회"],
+["reprieve from responsibility","n. phrase","책임 면제","A reprieve from personal responsibility for well-being is also given, with care provided by relatives, healers, or health professionals.","10회"],
+["therapeutic songwriting","n. phrase","치료적 작사","Songwriting can be a useful way to reflect verbally and musically on emotional topics in depth.","10회"],
+["improvising","v.","즉흥 연주하다","The music may be either based on melodies they already know or invented while improvising.","10회"],
+["accompaniment","n.","반주","The accompaniment is usually provided by the therapist, who follows the instructions of the adolescents concerning musical parameters.","10회"],
+["inventory","v.","재고 조사를 하다","I did inventory on it and found that it's a crate short.","10회"],
+["significant difference in salaries","n. phrase","급여의 현저한 차이","The manager decided that it would be easier to show Mr. Johnson why there was a significant difference in the salaries.","10회"],
+// ─── 11회 ───────────────────────────────────────────────────────────────
+["blistering","adj.","지독히 더운","One particularly blistering day nothing was going right.","11회"],
+["broke into tears","phrasal v.","눈물을 터뜨렸다","As I walked back down the street I broke into tears and kept crying for blocks.","11회"],
+["for the sake of helping","idiom","돕기 위해서라는 이유만으로","I'd helped her just for the sake of helping her, period.","11회"],
+["the sound from one hand clapping","idiom","한 손으로 치는 박수 소리 (아무런 보답 없이 주는 선행)","I still 'heard the beauty of the sound from one hand clapping.'","11회"],
+["provocative question","n. phrase","도발적인 질문","People find it engaging to ask a provocative question at the beginning of a lesson before any information about a phenomenon is known.","11회"],
+["hold off on","phrasal v.","미루다, 보류하다","It would be far wiser to hold off on that particularly compelling question.","11회"],
+["equipping all students equally","phrasal v.","모든 학생들에게 동등하게 지식을 갖추게 하다","By asking questions after building knowledge we help ensure that we are equipping all our students equally.","11회"],
+["power imbalances","n. phrase","힘의 불균형","The unequal access to knowledge creates power imbalances in groups.","11회"],
+["civil servant","n. phrase","공무원","Working as a civil servant for 30 years, he wrote poetry in his spare time.","11회"],
+["subtlety","n.","섬세함, 미묘함","With great subtlety, he makes the ancient world reflect upon the present.","11회"],
+["innate talent","n. phrase","타고난 재능","There is a widespread perception that expert musicians have innate talent, or giftedness, beyond ordinary abilities.","11회"],
+["work ethic","n. phrase","직업 윤리, 노력의 가치","There is a very real feeling that ability in music comes from a disciplined work ethic.","11회"],
+["dichotomy","n.","이분법","In the field of musical expertise, there is a dichotomy of thinking about whether ability comes from talent or hard work.","11회"],
+["territoriality","n.","영역 의식","Related to mobility is territoriality — human territoriality can be viewed as a strategy to control resources and people by controlling area.","11회"],
+["periphery","n.","주변부","The mean area of long-established Greek villages corresponds to a radius of about two and a half kilometres to get from the centre to the periphery and back again.","11회"],
+["collective pooling of knowledge","n. phrase","지식의 집단적 공유","The collective pooling of knowledge enables each generation to start where the last one left off.","11회"],
+["accumulated knowledge","n. phrase","축적된 지식","Even though we now have accumulated many centuries of knowledge, one study estimated that the world's total stock of information doubled between 2000 and 2002.","11회"],
+// ─── 12회 ───────────────────────────────────────────────────────────────
+["put the property on the market","phrasal v.","부동산을 시장에 내놓다","We have decided to put the property on the market.","12회"],
+["mortgage costs offset by rental income","n. phrase","임대 수입으로 상쇄되는 담보 대출 비용","Mortgage costs would be largely offset by income from a tenant.","12회"],
+["real estate agency commissions","n. phrase","부동산 중개 수수료","We would consider an offer based on a reasonable discount from the market value because of the savings we would realize in real estate agency commissions.","12회"],
+["per annum","adv.","1년에","Today we are using some 400 million plus tonnes of paper per annum in a global population of about seven billion.","12회"],
+["shortfall","n.","부족분","If we didn't recycle we would only have 240 million tonnes of paper so there would be a shortfall.","12회"],
+["shirker","n.","게으름뱅이","Imagine a population that consists of solid citizens and shirkers.","12회"],
+["natural selection","n. phrase","자연 선택","Natural selection requires differences in fitness so raising the fitness of everyone in the population has no effect.","12회"],
+["go extinct","phrasal v.","멸종되다","If the public good is costly to produce, the solid citizens will go extinct.","12회"],
+["maladaptive","adj.","비적응적인","Behaviors that are 'for the good of the group' are at worst maladaptive if there is any cost associated with producing the public good.","12회"],
+["impartial","adj.","공정한, 치우치지 않은","Sociology presumes studying social life and institutions in an objective and impartial way.","12회"],
+["common-sense sayings","n. phrase","상식적인 격언","Common-sense sayings are usually employed after the event, depending upon what seems to have taken place.","12회"],
+["all the options are covered","idiom","모든 경우의 수가 포함된다","The explanations are of no value because all the options are covered — whatever happens, there is a saying for it.","12회"],
+["conservation","n.","보전, 자연 보호","Even the care we take for nature is motivated by a certain goal-oriented striving under the heading of 'conservation.'","12회"],
+["intrinsically meaningful","adj. phrase","본질적으로 의미 있는","We lack the vocabulary in which to understand the diversity of nature as intrinsically meaningful and worthy of our engagement.","12회"],
+["biodiversity","n.","생물 다양성","When pressed to articulate why biodiversity matters, we turn almost automatically to some account of how, when one species goes extinct, others will suffer.","12회"],
+["ideational fluency","n. phrase","관념적 유창성","Most common in creativity testing is ideational fluency, the ability to name things that belong to a given class.","12회"],
+["associational fluency","n. phrase","연상적 유창성","Associational fluency is the ability to easily state synonyms for a given word.","12회"],
+["participation rate","n. phrase","경제 활동 참여율","It is important to pay attention to what is known as the 'participation rate': the percentage of people in the entire working-age population who are employed.","12회"],
+["technological unemployment","n. phrase","기술적 실업","One of the unhelpful consequences of the term 'technological unemployment' is that it encourages us to think that the only way new technologies affect work is by changing the unemployment rate.","12회"],
+["mismatches of skills","n. phrase","기술의 불일치","Some people, facing the mismatches of skills, identity, and place, might simply give up on the job hunt.","12회"],
+// ─── 13회 ───────────────────────────────────────────────────────────────
+["wax seal","n. phrase","밀랍 봉인","She pecked at the jar's wax seal with her index finger, but the wax would not move at all.","13회"],
+["pearly granules","n. phrase","진주 같은 알갱이","Several handfuls of pearly granules lay inside, smelling of salt.","13회"],
+["slammed the jar down","phrasal v.","항아리를 세게 내려놓았다","Shaking her head, Anna slammed the jar down on the table.","13회"],
+["consolidating information","phrasal v.","정보를 통합 정리하다","One of the first principles to organization is consolidating our information and data to weed out the stuff we don't need.","13회"],
+["weed out","phrasal v.","솎아내다, 제거하다","Consolidating our information and data helps weed out the stuff we don't need and group the data we do want to keep.","13회"],
+["actively avoided news","phrasal v.","적극적으로 뉴스를 피했다","The graph shows the share of respondents who said they actively avoided news in 2017, 2019, and 2022.","13회"],
+["optimum performance","n. phrase","최적의 성능","To ensure optimum performance, the mesh filter should be cleaned periodically.","13회"],
+["faulty materials","n. phrase","불량 재료","If this product is found to be faulty as a result of faulty materials within one year from date of purchase, it will be repaired free of charge.","13회"],
+["flightlessness","n.","비행 불능","Flightlessness and predation are undeniably connected, and birds living on islands where predation was nonexistent became flightless.","13회"],
+["predation","n.","포식","The only possible conclusion is that it was the level of predation, not the lack of predators, that produced flightlessness.","13회"],
+["semiflightless","adj.","반 비행 불능의","Why have several birds on the continental land masses reached the semiflightless stage in the face of numerous predators?","13회"],
+["less is more","idiom","적을수록 더 좋다","In the years ahead, the expression 'less is more' will have a greater level of importance as to how you integrate the ocean of insights coming your way.","13회"],
+["integrate insights","phrasal v.","통찰을 통합하다","The expression 'less is more' will have importance as to how you integrate the ocean of insights coming your way.","13회"],
+["erroneous education","n. phrase","잘못된 교육","A major problem occurs when there are unexpected, negative consequences because of erroneous, poorly planned, or improperly implemented education efforts.","13회"],
+["newly diagnosed with cancer","adj. phrase","최근 암 진단을 받은","Suppose you want to teach a group of people who are newly diagnosed with cancer that there is hope.","13회"],
+["perceive the same stimulus differently","phrasal v.","같은 자극을 다르게 인식하다","We now know that individuals perceive the same stimulus very differently.","13회"],
+// ─── 14회 ───────────────────────────────────────────────────────────────
+["exotic forms of matter","n. phrase","이색적인 형태의 물질","The ultimate fate of our universe probably depends on unseen and exotic forms of matter and energy.","14회"],
+["breakthrough","n.","획기적인 발견","We are trying to find the 'key' — a breakthrough to help understand unknown parts of the universe.","14회"],
+["evolutionary biology","n. phrase","진화생물학","Because the creative arts entail a universal, genetic trait, the answer lies in evolutionary biology.","14회"],
+["literate culture","n. phrase","문자 문화","Homo sapiens has been around about 100,000 years but literate culture has existed for less than a tenth of that time.","14회"],
+["excavate","v.","파다, 발굴하다","The innovations of jazz and rock will probably give us a better idea of where to excavate for answers about the creative arts.","14회"],
+["empathy gap","n. phrase","공감 격차","In order to close the empathy gap, we naturally employ a rule of thumb, a cognitive shortcut.","14회"],
+["egocentric empathy","n. phrase","자기중심적 공감","It seems that empathy is egocentric — when deciding whom to help, people tend to assume that they are the measure of everyone else's emotional states.","14회"],
+["assume that others are like us","phrasal v.","다른 사람들도 우리와 같다고 가정하다","In order to close the empathy gap, we naturally employ a cognitive shortcut: we assume that others are like us.","14회"],
+["biased jury verdicts","n. phrase","편향된 배심원 평결","The shortcut leads to biased jury verdicts that grant higher damage awards to plaintiffs residing nearby.","14회"],
+["longitude","n.","경도","Seafaring cultures had no way of determining their east-west longitude and precisely positioning themselves on maps.","14회"],
+["navigate far from shore","phrasal v.","해안에서 멀리 항해하다","Ships could not navigate far from the shore in ancient times.","14회"],
+["nervous system for humanity","n. phrase","인류의 신경계","The Internet would become a new nervous system for humanity, and humanity would become a new body and executive brain for the Internet.","14회"],
+["backbone of a sophisticated organism","n. phrase","정교한 유기체의 중추","The Internet could be the backbone of a sophisticated new organism if physically integrated with humanity.","14회"],
+["brush off","phrasal v.","무시하다, 퇴짜 놓다","He calmly ignored me and proceeded down the runway — one of my favorite heroes had brushed me off!","14회"],
+["autograph","n.","사인, 친필 서명","I was hoping to get Roy Face's autograph.","14회"]
+];
+
+var DEFS={
+"credentials":"official documents or qualifications proving one's ability",
+"hesitancy":"the quality of being slow to act due to uncertainty",
+"prerequisite":"something required as a prior condition for something else",
+"reflect at length on":"to think carefully and deeply about something for a long time",
+"be convinced that":"to be made to believe firmly that something is true",
+"frankly":"in an open and honest manner without concealment",
+"regret":"to feel sorry or sad about something that has happened",
+"protein":"a natural substance found in food that is necessary for body growth",
+"recycle":"to process used material so it can be used again",
+"cluster together":"to form into a group or mass",
+"aggregated":"collected together into a mass or whole",
+"clump":"a compact group or lump of something",
+"strangle":"to kill or damage by squeezing or blocking",
+"contract":"to become smaller or tighter",
+"transmit":"to send or pass something from one place or person to another",
+"registration":"the action of registering or the process of signing up",
+"dedicated":"giving a lot of time and effort to a particular purpose",
+"consistent campaigning":"sustained and regular effort to achieve a goal",
+"stick to":"to continue doing or believing something despite difficulties",
+"be convinced are right":"to be firmly certain that something is correct",
+"genuine":"truly what it is claimed to be; authentic and sincere",
+"resisting social pressure":"refusing to change one's behaviour due to group influence",
+"constrict":"to make or become narrower or smaller",
+"invasion of privacy":"an intrusion into someone's personal life without permission",
+"utterance":"a spoken word, statement, or vocal sound",
+"voluntarily ventures out":"to go outside of one's own free will",
+"retrieve":"to get or bring something back from somewhere",
+"consent to be viewed":"to agree to be seen or observed by others",
+"serotonin":"a chemical in the brain that contributes to feelings of well-being",
+"ward off illness":"to prevent illness from occurring",
+"immediate vicinity":"the area very close to a particular place",
+"bigotry":"intolerance towards those who hold different opinions or beliefs",
+"pounding":"beating loudly and rapidly",
+"wrap itself around":"to wind or coil around something",
+"freed from the fright":"released from a state of fear",
+"sensibility":"the ability to appreciate and respond to complex emotions",
+"trite":"overused and lacking original thought; hackneyed",
+"underlying message":"a meaning that is hidden beneath the surface of something",
+"be accompanied by":"to occur or appear together with something else",
+"myth":"a traditional story used to explain natural or social phenomena",
+"dismiss":"to decide that something is not worth considering",
+"universal concerns":"worries or interests that are shared by all people",
+"psyche":"the human soul, mind, or spirit",
+"brainchild":"a plan or invention conceived by a particular person",
+"pass a resolution":"to officially agree on a formal decision",
+"recite":"to say aloud something that has been memorised",
+"correspond to":"to match or be equivalent to something",
+"fabrication":"something invented or made up; a fiction",
+"ascribe reality to":"to believe that something actually exists",
+"crest":"to reach the top of something",
+"verified by a future observation":"proven true only by what happens later",
+"correlation":"a connection or relationship between two things",
+"dopamine reward circuit":"the brain pathway that produces feelings of pleasure",
+"gratifying":"giving pleasure or satisfaction",
+"attention deficit":"a difficulty in maintaining concentration for a period of time",
+"overloading of working memory":"putting too much information into short-term memory",
+"self-regulation":"the ability to control one's own behaviour and emotions",
+"perpetual marathon":"a race that never ends; a continuous effort",
+"gloat":"to show great pleasure at one's own success or another's failure",
+"pitfall":"a hidden danger or unexpected difficulty",
+"humbly":"in a way that is not proud or arrogant",
+"tackle":"to make a determined effort to deal with a problem",
+"regression to the mean":"the tendency for extreme values to move closer to the average",
+"jinx":"a person or thing that is believed to bring bad luck",
+"spectacular":"beautiful or impressive in a striking way",
+"deliberative democrat":"someone who believes in making decisions through open discussion",
+"unalterable":"not able to be changed",
+"inculcate":"to instil an attitude or idea firmly by repetition",
+"subjecting to reasoned arguments":"exposing something to logical and well-reasoned debate",
+"rationale":"the reasons behind a course of action or belief",
+"collectively":"as a group; together",
+"individuals influence and are influenced by":"people both affect and are affected by others around them",
+"post-industrial":"relating to society after manufacturing has declined",
+"self-sufficient":"able to produce everything one needs without outside help",
+"arsenal":"a collection of resources available for a particular purpose",
+"pour out her story":"to tell one's troubles or feelings without holding back",
+"deluge":"to overwhelm someone with a large quantity of something",
+"shoulder to cry on":"a person who listens sympathetically to another's problems",
+"elicit a polite rebuttal":"to produce a polite refusal or argument in response",
+"exclusively":"only, with no other options",
+"unauthorized sources":"sellers who are not officially approved",
+"proper handling":"treating or managing something correctly",
+"cascading chain of events":"a sequence of events where each one causes the next",
+"alter a choice":"to change a decision or selection",
+"subconsciously":"in a way that is not fully conscious or aware",
+"chain reaction":"a sequence of reactions where each one triggers the next",
+"dissemination":"the spreading of something, especially information, widely",
+"appropriated by":"taken or used by someone for their own purpose",
+"modeling":"demonstrating a behaviour as an example for others to follow",
+"immaturity":"lack of emotional or intellectual development",
+"pro-self-esteem problem-solving strategy":"an approach to problems that builds confidence",
+"inherent reason":"a natural or built-in purpose or motivation",
+"align with":"to be in agreement or consistent with something",
+"algorithmic sense of virtue":"a programmed understanding of moral values",
+"hoe":"a long-handled gardening tool for breaking up soil",
+"haulage":"the commercial transport of goods",
+"flax":"a plant whose fibres are used to make linen",
+"tapping into":"making use of a resource or energy source",
+"paradigm":"a typical example or model of something",
+"situations-cum-emotions":"a situation combined with the emotional response to it",
+"educate our emotions":"to train our emotional responses through experience",
+"swallow my pride":"to accept a situation that hurts one's pride",
+"contrary to my expectation":"in a way that was opposite to what was expected",
+"docked points":"to have marks or scores reduced as a penalty",
+"took a lot of courage and guts":"required great bravery and determination",
+"vintage technology":"older technology that has a certain appeal or charm",
+"renouncement":"the formal rejection or giving up of something",
+"slow movement":"a cultural trend favouring a slower pace of life",
+"refrain from":"to stop oneself from doing something",
+"practice a form of technological silence":"to deliberately reduce or pause technology use",
+"violation of anticipation":"the breaking of what the audience expects to happen",
+"activate knowledge":"to bring stored information into active use",
+"false assumption":"a belief that turns out to be incorrect",
+"apprenticeship":"a period of training under a skilled person",
+"mercer":"a dealer in textile fabrics",
+"foremost center for trade":"the most important place for commercial exchange",
+"presumably":"used to convey that one believes something is true without certainty",
+"dogness":"the essential quality that makes a dog a dog",
+"abstraction":"the quality of dealing with ideas rather than things",
+"enrich meaning":"to make meaning richer and more complete",
+"slang substitution":"the replacement of a standard word with slang",
+"cacophony":"a harsh, discordant mixture of sounds",
+"dappled":"marked with spots or patches of light and shadow",
+"camouflage":"to hide by making something look like the surroundings",
+"penetrating cry":"a sharp and piercing sound that can be heard over other noise",
+"model responsible use":"to demonstrate appropriate and thoughtful behaviour",
+"regulate technology use":"to control and manage how much technology is used",
+"stash out of sight":"to hide something where it cannot be easily seen",
+"nurturance":"the care and attention given to someone to help them develop",
+"destitute":"extremely poor and lacking basic resources",
+"keen learners":"people who are enthusiastic and eager to learn",
+"obligation to learn":"the duty or necessity to acquire knowledge",
+"shroud":"to cover or envelop so as to conceal from view",
+"government-subsidized":"financially supported by the government",
+"level playing field":"a situation where everyone has the same advantages and disadvantages",
+"bankrupt":"to make a person or company unable to pay their debts",
+"prioritization scheme":"a system for ranking tasks or goals in order of importance",
+"aviate":"to fly or pilot an aircraft",
+"adage":"a short statement expressing a general truth",
+"admit you can't do two things at once":"to acknowledge the limit of doing multiple tasks simultaneously",
+"summon":"to authoritatively call someone to appear",
+"radiant":"sending out light; clearly very happy or healthy",
+"experience the extremes of life":"to live through both the best and worst that life has to offer",
+"inhibitions":"feelings of shyness or embarrassment that prevent you acting freely",
+"norms make our interactions predictable":"social rules allow us to know what to expect from each other",
+"hearty handshake":"a warm and vigorous gripping of hands",
+"medically impaired":"physically limited due to a health condition",
+"designated collection points":"specific locations officially set aside for gathering waste",
+"consent":"permission given for something to happen",
+"vanity":"excessive pride in one's appearance or achievements",
+"unprecedented heights":"levels never reached or experienced before",
+"leap forward":"to make a sudden and large advancement",
+"glimpse":"a brief and partial view of something",
+"hierarchical power":"authority based on a ranked structure of command",
+"persuasion and relationship":"the use of argument and personal connection to influence others",
+"allocation of resources":"the process of distributing available supplies for use",
+"irreversible":"not able to be undone or changed back",
+"well-being of future generations":"the health and happiness of people living in the future",
+"jerk around":"to pull or move something sharply in different directions",
+"sensory bombardment":"an overwhelming flood of information to the senses",
+"passive":"accepting what happens without active response",
+"another thing will come along and replace":"a new stimulus will appear and displace the current one",
+"red-green colour blindness":"inability to distinguish between red and green colours",
+"corrective glasses":"eyewear designed to fix or improve a visual condition",
+"wept at the bright clarity":"cried tears of emotion upon seeing vivid colours clearly",
+"decoy effect":"the phenomenon where adding a third option changes preference",
+"lure people into choosing":"to attract or tempt people into making a particular choice",
+"rational choice":"a decision made based on logic and the best available information",
+"diversified":"made more varied or spread across different areas",
+"fragmented viewing audiences":"TV viewers split into many small separate groups",
+"proposition":"a statement or suggestion put forward for consideration",
+"splash park":"an outdoor water play area for children, usually free",
+"drawback":"a disadvantage or problem that makes something less acceptable",
+"finality":"the quality of being final and impossible to change",
+"uttered":"spoken or expressed aloud",
+"slip of the tongue":"an accidental mistake in speaking",
+"acutely conscious of":"very sharply aware of something",
+"speaking with restraint":"choosing words carefully and avoiding excess",
+"well thought out":"carefully considered and planned in advance",
+"rubbed his ego the wrong way":"made him feel threatened or jealous",
+"reflective":"involving careful thought about one's own feelings and actions",
+"aversion":"a strong feeling of dislike toward something",
+"green-eyed monster":"jealousy or envy",
+"verbal jabs":"sharp or hurtful remarks made in conversation",
+"get defensive":"to become protective and resistant to criticism",
+"block messages":"to prevent communication from being received or understood",
+"assign to a status":"to label or categorise someone in a particular way",
+"quest for publicity":"the pursuit of public attention or fame",
+"reciprocal connections":"relationships based on mutual giving and receiving",
+"contented life":"a life filled with satisfaction and peace",
+"swap the prospect of":"to trade one possible future for a different one",
+"tourist trap":"a place that overcharges tourists or offers poor value",
+"locational price differences":"variations in price based on where something is sold",
+"price discrimination":"charging different prices to different groups for the same product",
+"visually literate":"able to critically analyse and interpret visual media",
+"ideological points-of-view":"perspectives shaped by a particular set of beliefs",
+"challenge cultural biases":"to question and push back against ingrained prejudices",
+"dispel misconceptions":"to remove or correct false beliefs",
+"triumphantly":"in a way that shows great joy at a victory",
+"overjoyed":"extremely happy",
+"surge of progress":"a sudden and rapid advance in development",
+"self-proclaimed prophets":"people who declare themselves to be seers of the future",
+"surpass":"to go beyond a previous level or achievement",
+"artificial neural networks":"computing systems loosely modelled on the human brain",
+"formulate symbolic representations":"to create abstract models or ideas about the world",
+"solitary":"living alone; preferring to be alone",
+"undergrowth":"dense vegetation growing beneath trees in a forest",
+"clamber":"to climb awkwardly using hands and feet",
+"vegetarian":"feeding only on plants",
+"comical rolling gait":"a funny, swaying way of walking",
+"post-rationalisation":"finding reasons after the fact to justify a decision already made",
+"meagre sales":"very low or disappointing sales figures",
+"projective technique":"a psychology method to uncover unconscious attitudes",
+"negative implicit attitude":"an unconscious unfavourable feeling toward something",
+"pesticide":"a chemical used to kill or control unwanted organisms",
+"toxicity":"the degree to which something is harmful or poisonous",
+"regulate under federal law":"to control by official national rules and legislation",
+"semiotic":"relating to the study of signs and symbols",
+"ambiguous signals":"unclear or double-meaning indicators",
+"prolong the decoding process":"to extend the time it takes to understand something",
+"bird feeder":"a device placed outdoors to supply food for wild birds",
+"clutch size":"the number of eggs laid by a bird in one nesting attempt",
+"migratory behaviour":"the seasonal movement of animals from one place to another",
+"non-refundable":"not able to be paid back once given",
+"applied objectives":"goals aimed at solving practical real-world problems",
+"manipulate people":"to control others in a clever or unfair way",
+"cause-and-effect relationship":"a link where one event directly produces another",
+"social legitimization of sickness":"the social process of accepting someone as genuinely ill",
+"reprieve from responsibility":"a temporary release from duties or obligations",
+"therapeutic songwriting":"using the creation of songs as a form of therapy",
+"improvising":"creating or performing something spontaneously without preparation",
+"accompaniment":"music played to support or complement a main performance",
+"inventory":"a complete count of stock or goods",
+"significant difference in salaries":"a notable gap in the amount of money people earn",
+"blistering":"extremely hot",
+"broke into tears":"suddenly started crying",
+"for the sake of helping":"motivated only by the desire to help, expecting nothing back",
+"the sound from one hand clapping":"the beauty of giving help without expecting anything in return",
+"provocative question":"a question designed to stimulate thought or debate",
+"hold off on":"to delay or postpone something",
+"equipping all students equally":"ensuring every student has the same access to knowledge",
+"power imbalances":"unequal distributions of influence or authority in a group",
+"civil servant":"a person employed by the government",
+"subtlety":"the quality of being delicate or understated",
+"innate talent":"a natural ability present from birth",
+"work ethic":"the belief that hard work and diligence have value",
+"dichotomy":"a division into two contrasting or opposite parts",
+"territoriality":"the behaviour of defending an area against others",
+"periphery":"the outer edge or boundary of an area",
+"collective pooling of knowledge":"the gathering and sharing of knowledge across a community",
+"accumulated knowledge":"knowledge built up over a long period of time",
+"put the property on the market":"to make a house or land available for sale",
+"mortgage costs offset by rental income":"rental payments covering the cost of a home loan",
+"real estate agency commissions":"fees paid to a property agent for arranging a sale",
+"per annum":"per year; for each year",
+"shortfall":"a deficit; an amount by which something falls short of what is needed",
+"shirker":"a person who avoids work or responsibility",
+"natural selection":"the process by which traits that aid survival are passed on",
+"go extinct":"to die out completely as a species or group",
+"maladaptive":"not suited to a situation; harmful to survival or functioning",
+"impartial":"treating all sides equally; not biased",
+"common-sense sayings":"popular proverbs that seem to explain behaviour",
+"all the options are covered":"every possible outcome has an explanation, making none meaningful",
+"conservation":"the careful management and preservation of the natural environment",
+"intrinsically meaningful":"having value in and of itself, not because of what it produces",
+"biodiversity":"the variety of life in a particular habitat or ecosystem",
+"ideational fluency":"the ability to quickly generate many ideas on a topic",
+"associational fluency":"the ability to quickly think of synonyms or related words",
+"participation rate":"the proportion of working-age people who are employed",
+"technological unemployment":"job loss caused by machines replacing human workers",
+"mismatches of skills":"a lack of fit between a worker's abilities and what employers need",
+"wax seal":"a hard coating used to seal a container shut",
+"pearly granules":"small, rounded particles with a shiny, pearl-like appearance",
+"slammed the jar down":"put a container down forcefully on a surface",
+"consolidating information":"organising and combining data to make it more manageable",
+"weed out":"to remove unwanted or unnecessary things from a collection",
+"actively avoided news":"deliberately chose not to read or watch news",
+"optimum performance":"the best possible level of functioning",
+"faulty materials":"defective components used in manufacturing",
+"flightlessness":"the inability of a bird to fly",
+"predation":"the act of hunting and killing another animal for food",
+"semiflightless":"partially unable to fly; having limited flight ability",
+"less is more":"the idea that simplicity is preferable to complexity",
+"integrate insights":"to combine and apply knowledge and understanding",
+"erroneous education":"teaching that contains mistakes or is poorly implemented",
+"newly diagnosed with cancer":"recently told by a doctor that one has cancer",
+"perceive the same stimulus differently":"to experience the same thing in different ways",
+"exotic forms of matter":"unusual or unfamiliar types of physical substance",
+"breakthrough":"a sudden important discovery or development",
+"evolutionary biology":"the scientific study of how living things developed over time",
+"literate culture":"a society with the ability to read and write",
+"excavate":"to dig up or uncover something buried",
+"empathy gap":"the difficulty people have in understanding others' emotions",
+"egocentric empathy":"a tendency to understand others' feelings only through one's own lens",
+"assume that others are like us":"to believe other people feel or think the same way we do",
+"biased jury verdicts":"legal decisions unfairly influenced by personal factors",
+"longitude":"the angular distance east or west on the earth's surface",
+"navigate far from shore":"to sail or travel a long distance away from the coastline",
+"nervous system for humanity":"a network that connects and coordinates all of humanity",
+"backbone of a sophisticated organism":"the central support structure of a complex living system",
+"brush off":"to dismiss or ignore someone in a rude way",
+"autograph":"a person's signature, especially that of a celebrity"
+};
+
+var KO_SENT={};
+
+// ─── STATE ─────────────────────────────────────
+var ALL_Q=[...new Set(WL.map(function(w){return w[4];}))].sort(function(a,b){
+  var n1=parseInt(a),n2=parseInt(b);return n1-n2;
+});
+var tSel=new Set(),sSel=new Set();
+var quizWords=[],answered={},correct=0,wrong=0,quizMode='mc';
+
+// ─── TABS ───────────────────────────────────────
+document.addEventListener('DOMContentLoaded',function(){
+  document.getElementById('tab-btn-teacher').addEventListener('click',function(){
+    document.querySelectorAll('.nav-tab').forEach(function(b){b.classList.remove('active');});
+    document.querySelectorAll('.panel').forEach(function(p){p.classList.remove('active');});
+    this.classList.add('active');
+    document.getElementById('panel-teacher').classList.add('active');
+  });
+  document.getElementById('tab-btn-student').addEventListener('click',function(){
+    document.querySelectorAll('.nav-tab').forEach(function(b){b.classList.remove('active');});
+    document.querySelectorAll('.panel').forEach(function(p){p.classList.remove('active');});
+    this.classList.add('active');
+    document.getElementById('panel-student').classList.add('active');
+  });
+  buildGrid('tq-grid',tSel,'tq-ctr');
+  buildGrid('sq-grid',sSel,'sq-ctr');
+  toggleCat('vocab');
+  var ni=document.getElementById('s-name');
+  if(ni) ni.addEventListener('input',function(){this.style.borderColor='var(--bds)';});
+});
+
+function buildGrid(cid,selSet,ctrId){
+  var g=document.getElementById(cid);
+  ALL_Q.forEach(function(q){
+    var b=document.createElement('button');
+    b.className='qbtn';
+    b.textContent=q;
+    b.addEventListener('click',function(){
+      b.classList.toggle('on');
+      if(selSet.has(q)) selSet.delete(q);
+      else selSet.add(q);
+      updateCtr(selSet,ctrId);
+    });
+    g.appendChild(b);
+  });
+}
+
+function updateCtr(sel,ctrId){
+  var n=WL.filter(function(w){return sel.has(w[4]);}).length;
+  var el=document.getElementById(ctrId);
+  el.innerHTML='<strong>'+n+'</strong> words from <strong>'+sel.size+'</strong> round(s)';
+}
+
+document.getElementById('tq-all').addEventListener('click',function(){
+  document.querySelectorAll('#tq-grid .qbtn').forEach(function(b){b.classList.add('on');tSel.add(b.textContent);});
+  updateCtr(tSel,'tq-ctr');
+});
+document.getElementById('tq-clr').addEventListener('click',function(){
+  document.querySelectorAll('#tq-grid .qbtn').forEach(function(b){b.classList.remove('on');});
+  tSel.clear();updateCtr(tSel,'tq-ctr');
+});
+document.getElementById('sq-all').addEventListener('click',function(){
+  document.querySelectorAll('#sq-grid .qbtn').forEach(function(b){b.classList.add('on');sSel.add(b.textContent);});
+  updateCtr(sSel,'sq-ctr');
+});
+document.getElementById('sq-clr').addEventListener('click',function(){
+  document.querySelectorAll('#sq-grid .qbtn').forEach(function(b){b.classList.remove('on');});
+  sSel.clear();updateCtr(sSel,'sq-ctr');
+});
+
+function shuffle(a){var b=[].concat(a);for(var i=b.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=b[i];b[i]=b[j];b[j]=t;}return b;}
+
+function makeFill(word,sentence){
+  var clean=word.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
+  var re=new RegExp(clean,'i');
+  if(re.test(sentence)) return sentence.replace(re,'________');
+  var stripped=word.replace(/^(be|get|make|have|do|feel|come|go|take|give|put|set|bring|keep|let|turn|look|run|fall|hold|stand|stay|become|seem|appear)\s+/i,'');
+  if(stripped!==word){
+    var re2=new RegExp(stripped.replace(/[.*+?^${}()|[\]\\]/g,'\\$&'),'i');
+    if(re2.test(sentence)) return sentence.replace(re2,'________');
+  }
+  var fw=word.split(' ')[0];
+  if(fw.length>3){
+    var re3=new RegExp('\\b'+fw.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+'\\w*\\b','i');
+    if(re3.test(sentence)) return sentence.replace(re3,'________');
+  }
+  return sentence+' ['+word+']';
+}
+
+function showStatus(id,msg,cls){
+  var el=document.getElementById(id);
+  el.textContent=msg;el.className='st '+cls;el.style.display='block';
+}
+
+function getDecoys(correctKo,count){
+  var pool=WL.filter(function(w){return w[2]!==correctKo;}).map(function(w){return w[2];});
+  return shuffle(pool).slice(0,count||3);
+}
+
+function getWordDecoys(correctWord,count){
+  var pool=WL.filter(function(w){return w[0]!==correctWord;}).map(function(w){return w[0];});
+  return shuffle(pool).slice(0,count||3);
+}
+
+// ─── TEACHER ───────────────────────────────────
+function tGetWords(){
+  var w=WL.filter(function(x){return tSel.has(x[4]);});
+  return document.getElementById('t-sh').checked?shuffle(w):w;
+}
+
+document.getElementById('t-prev-btn').addEventListener('click',function(){
+  var words=tGetWords();
+  if(!words.length){showStatus('t-status','Please select at least one round.','er');return;}
+  var oKo=document.getElementById('t-ko').checked;
+  var oEn=document.getElementById('t-en').checked;
+  var oFi=document.getElementById('t-fi').checked;
+  var oPo=document.getElementById('t-po').checked;
+  if(!oKo&&!oEn&&!oFi&&!oPo){showStatus('t-status','Select at least one column.','er');return;}
+  var h='<table style="width:100%;border-collapse:collapse;"><tr style="background:var(--acc);color:#fff;">';
+  h+='<th style="padding:5px 7px;font-size:11px;">#</th><th style="padding:5px 7px;font-size:11px;">회</th><th style="padding:5px 7px;font-size:11px;">Word</th>';
+  if(oKo) h+='<th style="padding:5px 7px;font-size:11px;">① Korean</th>';
+  if(oEn) h+='<th style="padding:5px 7px;font-size:11px;">② English</th>';
+  if(oFi) h+='<th style="padding:5px 7px;font-size:11px;">③ Fill-blank</th>';
+  if(oPo) h+='<th style="padding:5px 7px;font-size:11px;">④ POS</th>';
+  h+='</tr>';
+  words.slice(0,8).forEach(function(row,i){
+    var bg=i%2?'background:var(--sf2)':'';
+    h+='<tr style="'+bg+'"><td style="padding:4px 7px;">'+( i+1)+'</td>';
+    h+='<td style="padding:4px 7px;font-size:10px;font-weight:700;">'+row[4]+'</td>';
+    h+='<td style="padding:4px 7px;font-weight:600;">'+row[0]+'</td>';
+    if(oKo) h+='<td style="padding:4px 7px;color:var(--ink3);">___________</td>';
+    if(oEn) h+='<td style="padding:4px 7px;color:var(--ink3);">___________</td>';
+    if(oFi) h+='<td style="padding:4px 7px;font-size:11px;color:var(--ink2);">'+makeFill(row[0],row[3]).substring(0,55)+'...</td>';
+    if(oPo) h+='<td style="padding:4px 7px;color:var(--ink3);">___________</td>';
+    h+='</tr>';
+  });
+  if(words.length>8) h+='<tr><td colspan="10" style="padding:4px 7px;color:var(--ink3);font-size:11px;">...and '+(words.length-8)+' more</td></tr>';
+  h+='</table>';
+  document.getElementById('t-preview').innerHTML=h;
+  showStatus('t-status','Preview: '+words.length+' words from '+[...tSel].join(', '),'ok');
+});
+
+document.getElementById('t-gen-btn').addEventListener('click',function(){
+  var words=tGetWords();
+  if(!words.length){showStatus('t-status','Please select at least one round.','er');return;}
+  var oKo=document.getElementById('t-ko').checked;
+  var oEn=document.getElementById('t-en').checked;
+  var oFi=document.getElementById('t-fi').checked;
+  var oPo=document.getElementById('t-po').checked;
+  var oKy=document.getElementById('t-ky').checked;
+  var cls=document.getElementById('t-cls').value||'';
+  if(!oKo&&!oEn&&!oFi&&!oPo){showStatus('t-status','Select at least one column.','er');return;}
+  var wb=XLSX.utils.book_new();
+  var qLabel=[...tSel].sort().join(', ');
+  var today=new Date().toISOString().slice(0,10);
+  var qs=[
+    ['EBS 수능특강 Q 미니모의고사 영어 Jump — Vocabulary Quiz'],
+    ['Rounds: '+qLabel+'   |   Total: '+words.length+' words   |   Date: '+today+(cls?' | Class: '+cls:'')],
+    ['Name:','','Score:','/ '+words.length*[oKo,oEn,oFi,oPo].filter(Boolean).length],
+    []
+  ];
+  var hdr=['#','Round','Word / Phrase'];
+  if(oKo) hdr.push('① Korean meaning');
+  if(oEn) hdr.push('② English word');
+  if(oFi) hdr.push('③ Fill in the blank');
+  if(oPo) hdr.push('④ Part of speech');
+  qs.push(hdr);
+  words.forEach(function(w,i){
+    var row=[i+1,w[4],w[0]];
+    if(oKo) row.push('');
+    if(oEn) row.push('');
+    if(oFi) row.push(makeFill(w[0],w[3]));
+    if(oPo) row.push('');
+    qs.push(row);
+  });
+  var wsQ=XLSX.utils.aoa_to_sheet(qs);
+  var wc=[{wch:4},{wch:6},{wch:36}];
+  if(oKo) wc.push({wch:30});
+  if(oEn) wc.push({wch:30});
+  if(oFi) wc.push({wch:70});
+  if(oPo) wc.push({wch:16});
+  wsQ['!cols']=wc;
+  XLSX.utils.book_append_sheet(wb,wsQ,'Quiz');
+  if(oKy){
+    var ks=[['ANSWER KEY — EBS 수능특강 Q Jump Vocabulary Quiz'],['Rounds: '+qLabel+'   |   '+words.length+' words'],[]];
+    var kh=['#','Round','Word','POS'];
+    if(oKo) kh.push('① Korean');
+    if(oEn) kh.push('② English');
+    if(oFi) kh.push('③ Fill answer');
+    if(oPo) kh.push('④ POS');
+    ks.push(kh);
+    words.forEach(function(w,i){
+      var r=[i+1,w[4],w[0],w[1]];
+      if(oKo) r.push(w[2]);
+      if(oEn) r.push(w[0]);
+      if(oFi) r.push(w[0]);
+      if(oPo) r.push(w[1]);
+      ks.push(r);
+    });
+    ks.push([]);ks.push(['— Example Sentences —']);
+    words.forEach(function(w,i){ks.push([i+1,w[0],w[3]]);});
+    var wsK=XLSX.utils.aoa_to_sheet(ks);
+    wsK['!cols']=[{wch:4},{wch:6},{wch:36},{wch:14},{wch:30},{wch:30},{wch:70},{wch:16}];
+    XLSX.utils.book_append_sheet(wb,wsK,'Answer Key');
+  }
+  var rs=[['Word Reference'],[], ['#','Round','Word','POS','Korean','Example Sentence']];
+  words.forEach(function(w,i){rs.push([i+1,w[4],w[0],w[1],w[2],w[3]]);});
+  var wsR=XLSX.utils.aoa_to_sheet(rs);
+  wsR['!cols']=[{wch:4},{wch:6},{wch:36},{wch:16},{wch:32},{wch:80}];
+  XLSX.utils.book_append_sheet(wb,wsR,'Word Reference');
+  var fname='vocab_jump_'+qLabel.replace(/,\s*/g,'+')+'_'+today+'.xlsx';
+  XLSX.writeFile(wb,fname);
+  showStatus('t-status','Downloaded: '+fname+' ('+words.length+' words)','ok');
+});
+
+// ─── STUDENT: MODE SELECT ──────────────────────
+['mc','fi','fi2','w1','w2','scr','scr2','scr3'].forEach(function(m){
+  var el=document.getElementById('mode-'+m);
+  if(!el) return;
+  el.addEventListener('click',function(e){
+    e.stopPropagation();
+    quizMode=m;
+    ['mc','fi','fi2','w1','w2','scr','scr2','scr3'].forEach(function(id){
+      var el2=document.getElementById('mode-'+id);
+      if(el2) el2.classList.toggle('sel',id===m);
+    });
+  });
+});
+
+function toggleCat(cat){
+  var body=document.getElementById('body-'+cat);
+  var arrow=document.getElementById('arrow-'+cat);
+  var card=document.getElementById('cat-'+cat);
+  var isOpen=body.style.display!=='none';
+  body.style.display=isOpen?'none':'block';
+  arrow.textContent=isOpen?'▶':'▼';
+  card.classList.toggle('cat-active',!isOpen);
+}
+toggleCat('vocab');
+
+// ─── STUDENT: START ────────────────────────────
+document.getElementById('s-start').addEventListener('click',function(){
+  var nameVal=document.getElementById('s-name').value.trim();
+  if(!nameVal){
+    var inp=document.getElementById('s-name');
+    inp.style.borderColor='var(--red)';
+    inp.focus();
+    showStatus('s-status','이름을 입력해 주세요! Please enter your name first.','er');
+    return;
+  }
+  document.getElementById('s-name').style.borderColor='var(--bds)';
+  showStatus('s-status','','');
+  var words=WL.filter(function(w){return sSel.has(w[4]);});
+  if(words.length<4){showStatus('s-status','Please select at least 4 words (needed for multiple choice).','er');return;}
+  if(document.getElementById('s-sh').checked) words=shuffle(words);
+  quizWords=words;
+  answered={};correct=0;wrong=0;
+  document.getElementById('s-setup').style.display='none';
+  document.getElementById('s-quiz').style.display='block';
+  document.getElementById('s-score').style.display='none';
+  updateLive();
+  renderQuiz();
+});
+
+function updateLive(){
+  var total=quizWords.length,done=correct+wrong;
+  document.getElementById('ls-c').textContent=correct;
+  document.getElementById('ls-w').textContent=wrong;
+  document.getElementById('ls-r').textContent=total-done;
+  document.getElementById('ls-p').textContent=done>0?Math.round(correct/done*100)+'%':'—';
+  document.getElementById('prog').style.width=(total>0?done/total*100:0)+'%';
+}
+
+// ─── RENDER QUIZ ───────────────────────────────
+function renderQuiz(){
+  var c=document.getElementById('q-container');
+  c.innerHTML='';
+  quizWords.forEach(function(w,i){c.appendChild(makeQCard(w,i));});
+}
+
+function showExpl(idx,word,ko,pos,ex){
+  var card=document.getElementById('card_'+idx);
+  if(!card) return;
+  var expl=card.querySelector('.expl');
+  if(!expl){
+    expl=document.createElement('div');
+    expl.className='expl';
+    card.appendChild(expl);
+  }
+  var def=DEFS[word]?'<span class="eng-def">💡 '+DEFS[word]+'</span><br>':'';
+  expl.innerHTML=def+'<strong>'+word+'</strong> <span style="color:var(--ink3);">('+pos+')</span> — <span style="color:var(--grn);">'+ko+'</span><br><span style="font-style:italic;">'+ex+'</span>';
+  expl.style.display='block';
+}
+
+function makeQCard(w,idx){
+  var word=w[0],pos=w[1],ko=w[2],ex=w[3],q=w[4];
+  var div=document.createElement('div');
+  div.className='qcard';
+  div.id='card_'+idx;
+
+  var type;
+  if(quizMode==='mc') type='mc_ko';
+  else if(quizMode==='fi') type='fill';
+  else if(quizMode==='fi2') type='fill2';
+  else if(quizMode==='w1') type='write_ko';
+  else if(quizMode==='w2') type='write_def';
+  else if(quizMode==='scr') type='scramble';
+  else if(quizMode==='scr2') type='scramble2';
+  else if(quizMode==='scr3') type='scramble3';
+  else type='mc_ko';
+
+  var meta='<div class="qmeta">';
+  meta+='<span class="qnum">Q'+(idx+1)+'/'+quizWords.length+'</span>';
+  meta+='<span class="badge">'+q+'</span>';
+  if(type==='mc_ko') meta+='<span class="tbadge">English → Korean</span>';
+  else if(type==='write_ko') meta+='<span class="tbadge">✍️ Korean → Type English</span>';
+  else if(type==='write_def') meta+='<span class="tbadge">✍️ Definition → Type English</span>';
+  else if(type==='scramble') meta+='<span class="tbadge">🔀 Scramble</span>';
+  else if(type==='scramble2') meta+='<span class="tbadge">🌈 Medium Scramble</span>';
+  else if(type==='scramble3') meta+='<span class="tbadge">🧩 Easy Chunks</span>';
+  else if(type==='fill2') meta+='<span class="tbadge">✏️ Fill + 🇰🇷</span>';
+  else meta+='<span class="tbadge">Fill in the blank</span>';
+  meta+='</div>';
+  div.innerHTML=meta;
+
+  if(type==='mc_ko'){
+    var p=document.createElement('div');
+    p.className='qprompt';
+    p.textContent=word+' ('+pos+')';
+    div.appendChild(p);
+    var opts=shuffle([ko].concat(getDecoys(ko)));
+    var optDiv=document.createElement('div');
+    optDiv.className='opts';
+    opts.forEach(function(o,i){
+      var b=document.createElement('button');
+      b.className='obtn';
+      b.textContent=String.fromCharCode(65+i)+'. '+o;
+      b.addEventListener('click',(function(opt,btn,correctOpt){
+        return function(){
+          if(answered[idx]!==undefined) return;
+          answered[idx]=opt;
+          var ok=opt===correctOpt;
+          if(ok) correct++; else wrong++;
+          updateLive();
+          optDiv.querySelectorAll('.obtn').forEach(function(b2){
+            b2.disabled=true;
+            var text=b2.textContent.slice(3);
+            if(text===correctOpt) b2.classList.add('correct');
+            else if(b2===btn&&!ok) b2.classList.add('wrong');
+          });
+          if(document.getElementById('s-rv').checked) showExpl(idx,word,ko,pos,ex);
+        };
+      })(o,b,ko));
+      optDiv.appendChild(b);
+    });
+    div.appendChild(optDiv);
+
+  } else if(type==='write_ko'||type==='write_def'){
+    var wp=document.createElement('div');
+    wp.className='qprompt';
+    if(type==='write_ko'){
+      wp.textContent=ko;
+    } else {
+      wp.textContent=DEFS[word]?DEFS[word]:'(see example below)';
+    }
+    div.appendChild(wp);
+    if(type==='write_def'){
+      var hint=document.createElement('div');
+      hint.className='qhint';
+      hint.textContent=ex;
+      div.appendChild(hint);
+    }
+    var wfrow=document.createElement('div');
+    wfrow.className='frow';
+    var winp=document.createElement('input');
+    winp.type='text';
+    winp.className='finp';
+    winp.id='fi_'+idx;
+    winp.placeholder='Type the English word/phrase...';
+    var wbtn=document.createElement('button');
+    wbtn.textContent='Check ✓';
+    wbtn.className='btn btn-p';
+    wbtn.style.fontSize='13px';
+    wbtn.type='button';
+    wfrow.appendChild(winp);
+    wfrow.appendChild(wbtn);
+    div.appendChild(wfrow);
+    function checkWrite(){
+      if(answered[idx]!==undefined) return;
+      var val=winp.value.trim();
+      if(!val) return;
+      answered[idx]=val;
+      var ok=val.toLowerCase()===word.toLowerCase();
+      if(ok) correct++; else wrong++;
+      updateLive();
+      winp.disabled=true;wbtn.disabled=true;
+      winp.classList.add(ok?'correct':'wrong');
+      if(!ok){
+        var fix=document.createElement('div');
+        fix.style.cssText='font-size:12px;color:var(--red);margin-top:4px;';
+        fix.textContent='✗  Correct: '+word;
+        div.appendChild(fix);
+      }
+      if(document.getElementById('s-rv').checked) showExpl(idx,word,ko,pos,ex);
+    }
+    wbtn.addEventListener('click',checkWrite);
+    winp.addEventListener('keydown',function(e){if(e.key==='Enter') checkWrite();});
+
+  } else if(type==='fill'||type==='fill2'){
+    var filled=makeFill(word,ex);
+    if(type==='fill2'){
+      var koh=document.createElement('div');
+      koh.className='qhint';
+      koh.textContent='🇰🇷 '+ko;
+      div.appendChild(koh);
+    }
+    var fp=document.createElement('div');
+    fp.className='qprompt';
+    fp.style.fontSize='14px';
+    fp.textContent=filled;
+    div.appendChild(fp);
+    var ffrow=document.createElement('div');
+    ffrow.className='frow';
+    var finp=document.createElement('input');
+    finp.type='text';
+    finp.className='finp';
+    finp.id='fi_'+idx;
+    finp.placeholder='Fill in the blank...';
+    var fbtn=document.createElement('button');
+    fbtn.textContent='Check ✓';
+    fbtn.className='btn btn-p';
+    fbtn.style.fontSize='13px';
+    fbtn.type='button';
+    ffrow.appendChild(finp);
+    ffrow.appendChild(fbtn);
+    div.appendChild(ffrow);
+    function checkFill(){
+      if(answered[idx]!==undefined) return;
+      var val=finp.value.trim();
+      if(!val) return;
+      answered[idx]=val;
+      var ok=val.toLowerCase()===word.toLowerCase();
+      if(ok) correct++; else wrong++;
+      updateLive();
+      finp.disabled=true;fbtn.disabled=true;
+      finp.classList.add(ok?'correct':'wrong');
+      if(!ok){
+        var fix2=document.createElement('div');
+        fix2.style.cssText='font-size:12px;color:var(--red);margin-top:4px;';
+        fix2.textContent='✗  Correct: '+word;
+        div.appendChild(fix2);
+      }
+      if(document.getElementById('s-rv').checked) showExpl(idx,word,ko,pos,ex);
+    }
+    fbtn.addEventListener('click',checkFill);
+    finp.addEventListener('keydown',function(e){if(e.key==='Enter') checkFill();});
+
+  } else if(type==='scramble'){
+    // ... existing scramble code below
+    var sd=document.createElement('div');
+    var swl=document.createElement('div');
+    swl.style.cssText='font-size:13px;font-weight:700;color:var(--acc);margin-bottom:4px;';
+    swl.textContent=word+' ('+pos+')';
+    sd.appendChild(swl);
+    var swk=document.createElement('div');
+    swk.style.cssText='font-size:12px;color:var(--grn);font-weight:600;margin-bottom:.75rem;';
+    swk.textContent='🇰🇷 '+ko;
+    sd.appendChild(swk);
+    var sInstr=document.createElement('div');
+    sInstr.style.cssText='font-size:11px;color:var(--ink3);margin-bottom:.6rem;';
+    sInstr.textContent='Click words to build the sentence in order.';
+    sd.appendChild(sInstr);
+    var words_arr=ex.split(' ');
+    var shuffled=shuffle(words_arr.slice());
+    var safety=0;
+    while(shuffled.join(' ')===ex&&safety<15){shuffled=shuffle(words_arr.slice());safety++;}
+    var bankT=document.createElement('div');
+    bankT.style.cssText='font-size:11px;font-weight:700;color:var(--acc);text-transform:uppercase;letter-spacing:.5px;margin-bottom:.4rem;';
+    bankT.textContent='Word Bank';
+    sd.appendChild(bankT);
+    var bankZone=document.createElement('div');
+    bankZone.className='scr-zone';
+    sd.appendChild(bankZone);
+    var ansT=document.createElement('div');
+    ansT.style.cssText='font-size:11px;font-weight:700;color:var(--acc);text-transform:uppercase;letter-spacing:.5px;margin-bottom:.4rem;margin-top:.75rem;';
+    ansT.textContent='Your Sentence';
+    sd.appendChild(ansT);
+    var ansZone=document.createElement('div');
+    ansZone.className='scr-zone';
+    sd.appendChild(ansZone);
+    var fb=document.createElement('div');
+    fb.className='scr-feedback';
+    sd.appendChild(fb);
+    var keyDiv=document.createElement('div');
+    keyDiv.className='scr-key';
+    keyDiv.style.display='none';
+    sd.appendChild(keyDiv);
+    function makeChip(text){
+      var chip=document.createElement('span');
+      chip.className='word-chip';
+      chip.textContent=text;
+      chip.addEventListener('click',function(){
+        if(answered[idx]!==undefined||chip.dataset.locked) return;
+        if(chip.parentElement===bankZone) ansZone.appendChild(chip);
+        else if(chip.parentElement===ansZone) bankZone.appendChild(chip);
+      });
+      return chip;
+    }
+    shuffled.forEach(function(t){bankZone.appendChild(makeChip(t));});
+    var btnRow=document.createElement('div');
+    btnRow.style.cssText='display:flex;gap:8px;flex-wrap:wrap;margin-top:.5rem;';
+    var checkBtn=document.createElement('button');
+    checkBtn.textContent='Check ✓';
+    checkBtn.className='btn btn-p';
+    checkBtn.style.fontSize='13px';
+    checkBtn.type='button';
+    checkBtn.addEventListener('click',function(){
+      if(answered[idx]!==undefined) return;
+      var placed=[].slice.call(ansZone.querySelectorAll('span'));
+      if(placed.length===0){fb.textContent='Move words to your sentence first!';fb.style.color='var(--red)';return;}
+      var attempt=placed.map(function(c){return c.textContent;}).join(' ');
+      var ok=(attempt===ex);
+      answered[idx]=attempt;
+      var allChips=[].slice.call(bankZone.querySelectorAll('span')).concat([].slice.call(ansZone.querySelectorAll('span')));
+      allChips.forEach(function(c){c.dataset.locked='1';c.style.cursor='default';});
+      if(ok){correct++;fb.textContent='✓ Perfect!';fb.classList.add('ok');ansZone.classList.add('correct-zone');}
+      else{wrong++;fb.textContent='✗ Not quite — check the word order';fb.classList.add('ng');ansZone.classList.add('wrong-zone');keyDiv.textContent='✓ '+ex;keyDiv.style.display='block';}
+      checkBtn.disabled=true;resetBtn.disabled=true;
+      updateLive();
+      if(document.getElementById('s-rv').checked) showExpl(idx,word,ko,pos,ex);
+    });
+    var resetBtn=document.createElement('button');
+    resetBtn.textContent='Reset ↺';
+    resetBtn.className='btn btn-s';
+    resetBtn.style.fontSize='13px';
+    resetBtn.type='button';
+    resetBtn.addEventListener('click',function(){
+      if(answered[idx]!==undefined) return;
+      [].slice.call(ansZone.querySelectorAll('span')).forEach(function(c){bankZone.appendChild(c);});
+      fb.textContent='';fb.className='scr-feedback';keyDiv.style.display='none';
+      ansZone.className='scr-zone';bankZone.className='scr-zone';
+    });
+    btnRow.appendChild(checkBtn);btnRow.appendChild(resetBtn);
+    sd.appendChild(btnRow);
+    div.appendChild(sd);
+  } else if(type==='scramble2'){
+    makeScramble2Card(w,idx,div);
+  } else if(type==='scramble3'){
+    makeScramble3Card(w,idx,div);
+  }
+  return div;
+}
+
+// ─── REVEAL ALL ───────────────────────────────
+document.getElementById('s-reveal').addEventListener('click',function(){
+  quizWords.forEach(function(w,i){
+    if(answered[i]!==undefined) return;
+    answered[i]='revealed';
+    var card=document.getElementById('card_'+i);
+    if(!card) return;
+    card.querySelectorAll('.obtn').forEach(function(b){
+      b.disabled=true;
+      var text=b.textContent.slice(3);
+      if(text===w[2]||text===w[0]) b.classList.add('reveal');
+    });
+    var inp=document.getElementById('fi_'+i);
+    if(inp){inp.disabled=true;inp.value=w[0];inp.classList.add('reveal');}
+    showExpl(i,w[0],w[2],w[1],w[3]);
+  });
+  updateLive();
+});
+
+// ─── RESULTS ───────────────────────────────────
+document.getElementById('s-results').addEventListener('click',showScore);
+function showScore(){
+  var total=quizWords.length,done=correct+wrong;
+  var pct=done>0?Math.round(correct/done*100):0;
+  document.getElementById('s-quiz').style.display='none';
+  document.getElementById('s-score').style.display='block';
+  var emoji=pct>=90?'🏆':pct>=70?'🎉':pct>=50?'👍':'💪';
+  var taskLabels={
+    'mc':'📚 Multiple choice 객관식',
+    'fi':'✏️ Fill in the blank',
+    'fi2':'✏️ Fill in the blank + 🇰🇷',
+    'w1':'✍️ Type 1 — Korean → English',
+    'w2':'✍️ Type 2 — Definition → English',
+    'scr':'🔀 Sentence Scramble',
+    'scr2':'🌈 Medium Scramble',
+    'scr3':'🧩 Easy Scramble — Chunks'
+  };
+  var taskEl=document.getElementById('sc-tasktype');
+  if(taskEl) taskEl.textContent=taskLabels[quizMode]||quizMode;
+  document.getElementById('sc-emoji').textContent=emoji;
+  document.getElementById('sc-pct').textContent=pct+'%';
+  var name=document.getElementById('s-name').value;
+  document.getElementById('sc-sub').textContent=(name?name+' — ':'')+correct+' / '+total+' correct';
+  var now=new Date();
+  var days=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+  var months=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  var hh=now.getHours(),mm=now.getMinutes(),ss=now.getSeconds();
+  var ampm=hh>=12?'PM':'AM';hh=hh%12||12;
+  var timeStr=hh+':'+(mm<10?'0':'')+mm+':'+(ss<10?'0':'')+ss+' '+ampm;
+  var dateStr=days[now.getDay()]+', '+months[now.getMonth()]+' '+now.getDate()+', '+now.getFullYear();
+  document.getElementById('sc-datetime').textContent='📅 '+dateStr+'  ·  🕐 '+timeStr;
+  var msg,bg,color;
+  if(pct===100){msg="🌟 Perfect score! You're absolutely amazing!";bg='#FFF8E1';color='#E65100';}
+  else if(pct>=90){msg="🏆 Excellent work! You've mastered this vocabulary!";bg='#E8F5E9';color='#1B5E20';}
+  else if(pct>=80){msg="🎉 Great job! Just a little more practice!";bg='#E3F2FD';color='#0D47A1';}
+  else if(pct>=70){msg="👍 Good effort! Review the words you missed and try again!";bg='#E8EAF6';color='#1A237E';}
+  else if(pct>=50){msg="💪 Keep going! Every mistake is a chance to learn something new!";bg='#FFF3E0';color='#E65100';}
+  else if(pct>=30){msg="📖 Don't give up! Read through the word list and try again!";bg='#FCE4EC';color='#880E4F';}
+  else{msg="🌱 Every expert was once a beginner! Study the list and come back stronger!";bg='#F3E5F5';color='#4A148C';}
+  var el=document.getElementById('sc-encourage');
+  el.textContent=msg;el.style.background=bg;el.style.color=color;el.style.border='1.5px solid '+color;
+  document.getElementById('sc-grid').innerHTML=
+    '<div class="sbox"><div class="v">'+correct+'</div><div class="l">Correct ✓</div></div>'+
+    '<div class="sbox"><div class="v">'+wrong+'</div><div class="l">Wrong ✗</div></div>'+
+    '<div class="sbox"><div class="v">'+(total-done)+'</div><div class="l">Skipped</div></div>'+
+    '<div class="sbox"><div class="v">'+pct+'%</div><div class="l">Score</div></div>';
+  var rl=document.getElementById('sc-review');
+  var wrongs=[];
+  quizWords.forEach(function(w,i){
+    var a=answered[i];
+    if(a===undefined||a==='revealed') return;
+    if(a.toLowerCase()!==w[0].toLowerCase()&&a!==w[2]) wrongs.push(w);
+  });
+  if(!wrongs.length){rl.innerHTML='<p style="font-size:13px;color:var(--grn);">No wrong answers — great work! 🎉</p>';return;}
+  rl.innerHTML=wrongs.map(function(w){
+    var engdef=DEFS[w[0]]?'<span style="color:var(--acc);font-size:11px;font-style:italic;">💡 '+DEFS[w[0]]+'</span><br>':'';
+    return '<div class="ritem"><div class="rword">'+w[0]+' <span style="font-size:11px;color:var(--ink3);">'+w[1]+'</span></div>'+
+      '<div class="rans">'+engdef+'<span style="color:var(--grn);">✓ '+w[2]+'</span><br>'+
+      '<span style="color:var(--ink3);font-size:11px;font-style:italic;">'+w[3]+'</span></div></div>';
+  }).join('');
+}
+
+document.getElementById('sc-retry').addEventListener('click',function(){
+  document.getElementById('s-score').style.display='none';
+  answered={};correct=0;wrong=0;
+  if(document.getElementById('s-sh').checked) quizWords=shuffle(quizWords);
+  document.getElementById('s-quiz').style.display='block';
+  updateLive();renderQuiz();
+});
+document.getElementById('sc-new').addEventListener('click',function(){
+  document.getElementById('s-score').style.display='none';
+  document.getElementById('s-setup').style.display='block';
+});
+// ─── POS TAGGER ────────────────────────────────
+var POS_COLORS={
+  'noun':{bg:'#DBEAFE',border:'#3B82F6',color:'#1E3A8A'},
+  'verb':{bg:'#DCFCE7',border:'#22C55E',color:'#14532D'},
+  'adj':{bg:'#FEF3C7',border:'#F59E0B',color:'#78350F'},
+  'other':{bg:'#F1F5F9',border:'#94A3B8',color:'#334155'}
+};
+function tagToken(token){
+  var t=token.toLowerCase().replace(/[.,!?;:'"()]/g,'');
+  if(/^[.,!?;:'"()\-]+$/.test(token)) return 'other';
+  if(/^(a|an|the|this|that|these|those|it|its|they|their|we|our|you|your|he|his|she|her|i|my)$/.test(t)) return 'other';
+  if(/^(in|on|at|to|for|of|from|with|by|as|into|onto|upon|about|over|under|through|between|among|across|along|around|behind|before|after|during|within|without|against|toward|towards|per|via|near|since|until|up|down|off|out|past)$/.test(t)) return 'other';
+  if(/^(and|or|but|so|yet|nor|although|because|since|while|if|when|where|that|which|who|whom|whose|what|how|whether|than|as|both|either|neither|not|also|however|therefore|thus|moreover|meanwhile)$/.test(t)) return 'other';
+  if(/^(is|are|was|were|be|been|being|have|has|had|do|does|did|will|would|shall|should|may|might|must|can|could)$/.test(t)) return 'verb';
+  if(/(?:ing|ed|ize|ise|ify|en|ate)$/.test(t)&&t.length>4) return 'verb';
+  if(/(?:ly|ful|less|ous|ive|al|ical|able|ible|ent|ant|ish)$/.test(t)) return 'adj';
+  if(/(?:tion|sion|ment|ness|ity|ance|ence|ship|hood|dom|ism|ist|er|or|ure|age)$/.test(t)&&t.length>4) return 'noun';
+  if(/^[A-Z]/.test(token)&&token!==token.toUpperCase()) return 'noun';
+  return 'noun';
+}
+var CHUNK_PALETTE=[
+  {bg:'#DBEAFE',border:'#3B82F6',color:'#1E3A8A'},
+  {bg:'#DCFCE7',border:'#22C55E',color:'#14532D'},
+  {bg:'#FEF3C7',border:'#F59E0B',color:'#78350F'},
+  {bg:'#FCE7F3',border:'#EC4899',color:'#831843'},
+  {bg:'#EDE9FE',border:'#8B5CF6',color:'#3B0764'},
+  {bg:'#FFEDD5',border:'#F97316',color:'#7C2D12'},
+  {bg:'#CFFAFE',border:'#06B6D4',color:'#164E63'},
+  {bg:'#F0FDF4',border:'#4ADE80',color:'#166534'}
+];
+function chunkSentence(sentence){
+  var words=sentence.split(' ');
+  var chunks=[];
+  var i=0;
+  while(i<words.length){
+    var w=words[i];
+    var wl=w.toLowerCase().replace(/[.,!?;:'"()]/g,'');
+    if(/^(a|an|the|this|that|these|those|my|your|his|her|its|our|their|no|every|each|any|some)$/.test(wl)){
+      var chunk=[w];
+      if(i+1<words.length) chunk.push(words[i+1]);
+      if(i+2<words.length){
+        var nx=words[i+2].toLowerCase().replace(/[.,!?;:'"()]/g,'');
+        if(!/^(is|are|was|were|be|have|has|had|will|would|can|could|should|may|might|must|to|that|which|who|in|on|at|of|by|from|with|for|and|or|but|,|.)$/.test(nx)){chunk.push(words[i+2]);i+=3;}
+        else{i+=2;}
+      }else{i+=2;}
+      chunks.push(chunk.join(' '));
+    } else if(/^(in|on|at|to|for|of|from|with|by|into|onto|about|over|under|through|between|among|across|along|around|behind|before|after|during|without|against|toward|towards|near|since|until)$/.test(wl)){
+      var chunk2=[w];
+      if(i+1<words.length) chunk2.push(words[i+1]);
+      if(i+2<words.length){
+        var nx2=words[i+2].toLowerCase().replace(/[.,!?;:'"()]/g,'');
+        if(!/^(in|on|at|to|for|of|from|with|by|and|or|but|,|.|that|which|who|is|are|was|were|will|would|can|could|should|may|might|must)$/.test(nx2)){chunk2.push(words[i+2]);i+=3;}
+        else{i+=2;}
+      }else{i+=2;}
+      chunks.push(chunk2.join(' '));
+    } else if(/^(is|are|was|were|be|been|being|have|has|had|will|would|shall|should|may|might|must|can|could|do|does|did|not|never|also|often|usually|always|sometimes)$/.test(wl)){
+      var chunk3=[w];
+      if(i+1<words.length) chunk3.push(words[i+1]);
+      i+=2;
+      chunks.push(chunk3.join(' '));
+    } else {
+      if(i+1<words.length){
+        var nx3=words[i+1].toLowerCase().replace(/[.,!?;:'"()]/g,'');
+        if(/(?:ly|fully|lessly|ingly)$/.test(nx3)||/^(very|quite|rather|extremely|highly|deeply|truly|really|absolutely|completely|totally)$/.test(nx3)){
+          chunks.push(w+' '+words[i+1]);i+=2;
+        }else{chunks.push(w);i++;}
+      }else{chunks.push(w);i++;}
+    }
+  }
+  if(chunks.length<3){
+    chunks=[];
+    for(var j=0;j<words.length;j+=2){
+      if(j+1<words.length) chunks.push(words[j]+' '+words[j+1]);
+      else chunks.push(words[j]);
+    }
+  }
+  return chunks;
+}
+
+function makeScramble2Card(w,idx,div){
+  var word=w[0],pos=w[1],ko=w[2],ex=w[3];
+  var sd=document.createElement('div');
+  var swl=document.createElement('div');
+  swl.style.cssText='font-size:13px;font-weight:700;color:var(--acc);margin-bottom:4px;';
+  swl.textContent=word+' ('+pos+')';
+  sd.appendChild(swl);
+  var swk=document.createElement('div');
+  swk.style.cssText='font-size:12px;color:var(--grn);font-weight:600;margin-bottom:.75rem;';
+  swk.textContent='🇰🇷 '+ko;
+  sd.appendChild(swk);
+  var sInstr=document.createElement('div');
+  sInstr.style.cssText='font-size:11px;color:var(--ink3);margin-bottom:.6rem;';
+  sInstr.textContent='Words are colour-coded by part of speech. Click to build the sentence.';
+  sd.appendChild(sInstr);
+  var words_arr=ex.split(' ');
+  var shuffled=shuffle(words_arr.slice());
+  var safety=0;
+  while(shuffled.join(' ')===ex&&safety<15){shuffled=shuffle(words_arr.slice());safety++;}
+  var bankT=document.createElement('div');
+  bankT.style.cssText='font-size:11px;font-weight:700;color:var(--acc);text-transform:uppercase;letter-spacing:.5px;margin-bottom:.4rem;';
+  bankT.textContent='Word Bank';
+  sd.appendChild(bankT);
+  var bankZone=document.createElement('div');
+  bankZone.className='scr-zone';
+  sd.appendChild(bankZone);
+  var ansT=document.createElement('div');
+  ansT.style.cssText='font-size:11px;font-weight:700;color:var(--acc);text-transform:uppercase;letter-spacing:.5px;margin-bottom:.4rem;margin-top:.75rem;';
+  ansT.textContent='Your Sentence';
+  sd.appendChild(ansT);
+  var ansZone=document.createElement('div');
+  ansZone.className='scr-zone';
+  sd.appendChild(ansZone);
+  var fb=document.createElement('div');
+  fb.className='scr-feedback';
+  sd.appendChild(fb);
+  var keyDiv=document.createElement('div');
+  keyDiv.className='scr-key';
+  keyDiv.style.display='none';
+  sd.appendChild(keyDiv);
+  function makeColorChip(text){
+    var posType=tagToken(text);
+    var c=POS_COLORS[posType]||POS_COLORS['other'];
+    var chip=document.createElement('span');
+    chip.style.cssText='display:inline-block;padding:6px 11px;background:'+c.bg+';border:1.5px solid '+c.border+';border-radius:20px;font-size:13px;color:'+c.color+';cursor:pointer;user-select:none;font-family:inherit;transition:all .15s;margin:2px;';
+    chip.textContent=text;
+    chip.addEventListener('click',function(){
+      if(answered[idx]!==undefined||chip.dataset.locked) return;
+      if(chip.parentElement===bankZone) ansZone.appendChild(chip);
+      else if(chip.parentElement===ansZone) bankZone.appendChild(chip);
+    });
+    return chip;
+  }
+  shuffled.forEach(function(t){bankZone.appendChild(makeColorChip(t));});
+  var btnRow=document.createElement('div');
+  btnRow.style.cssText='display:flex;gap:8px;flex-wrap:wrap;margin-top:.5rem;';
+  var checkBtn=document.createElement('button');
+  checkBtn.textContent='Check ✓';
+  checkBtn.className='btn btn-p';
+  checkBtn.style.fontSize='13px';
+  checkBtn.type='button';
+  checkBtn.addEventListener('click',function(){
+    if(answered[idx]!==undefined) return;
+    var placed=[].slice.call(ansZone.querySelectorAll('span'));
+    if(placed.length===0){fb.textContent='Move words first!';fb.style.color='var(--red)';return;}
+    var attempt=placed.map(function(c){return c.textContent;}).join(' ');
+    var ok=(attempt===ex);
+    answered[idx]=attempt;
+    var allChips=[].slice.call(bankZone.querySelectorAll('span')).concat([].slice.call(ansZone.querySelectorAll('span')));
+    allChips.forEach(function(c){c.dataset.locked='1';c.style.cursor='default';});
+    if(ok){correct++;fb.textContent='✓ Perfect!';fb.classList.add('ok');ansZone.classList.add('correct-zone');}
+    else{wrong++;fb.textContent='✗ Not quite — check the word order';fb.classList.add('ng');ansZone.classList.add('wrong-zone');keyDiv.textContent='✓ '+ex;keyDiv.style.display='block';}
+    checkBtn.disabled=true;resetBtn.disabled=true;
+    updateLive();
+    if(document.getElementById('s-rv').checked) showExpl(idx,word,ko,pos,ex);
+  });
+  var resetBtn=document.createElement('button');
+  resetBtn.textContent='Reset ↺';
+  resetBtn.className='btn btn-s';
+  resetBtn.style.fontSize='13px';
+  resetBtn.type='button';
+  resetBtn.addEventListener('click',function(){
+    if(answered[idx]!==undefined) return;
+    [].slice.call(ansZone.querySelectorAll('span')).forEach(function(c){bankZone.appendChild(c);});
+    fb.textContent='';fb.className='scr-feedback';keyDiv.style.display='none';
+    ansZone.className='scr-zone';bankZone.className='scr-zone';
+  });
+  btnRow.appendChild(checkBtn);btnRow.appendChild(resetBtn);
+  sd.appendChild(btnRow);
+  div.appendChild(sd);
+}
+
+function makeScramble3Card(w,idx,div){
+  var word=w[0],pos=w[1],ko=w[2],ex=w[3];
+  var s3=document.createElement('div');
+  var swl3=document.createElement('div');
+  swl3.style.cssText='font-size:13px;font-weight:700;color:var(--acc);margin-bottom:4px;';
+  swl3.textContent=word+' ('+pos+')';
+  s3.appendChild(swl3);
+  var swk3=document.createElement('div');
+  swk3.style.cssText='font-size:12px;color:var(--grn);font-weight:600;margin-bottom:.75rem;';
+  swk3.textContent='🇰🇷 '+ko;
+  s3.appendChild(swk3);
+  var instr3=document.createElement('div');
+  instr3.style.cssText='font-size:11px;color:var(--ink3);margin-bottom:.6rem;';
+  instr3.textContent='Click a chunk to move it. Each colour is a phrase group.';
+  s3.appendChild(instr3);
+  var chunks3=chunkSentence(ex);
+  var shuffledChunks=chunks3.slice().sort(function(){return Math.random()-.5;});
+  var safety3=0;
+  while(shuffledChunks.join('|')===chunks3.join('|')&&safety3<15){shuffledChunks=chunks3.slice().sort(function(){return Math.random()-.5;});safety3++;}
+  var bankT3=document.createElement('div');
+  bankT3.style.cssText='font-size:11px;font-weight:700;color:var(--acc);text-transform:uppercase;letter-spacing:.5px;margin-bottom:.4rem;';
+  bankT3.textContent='Chunk Bank';
+  s3.appendChild(bankT3);
+  var bank3=document.createElement('div');
+  bank3.style.cssText='min-height:54px;border:2px dashed #b0b8c4;border-radius:10px;padding:8px;display:flex;flex-wrap:wrap;gap:7px;background:var(--sf);margin-bottom:.9rem;align-content:flex-start;';
+  s3.appendChild(bank3);
+  var ansT3=document.createElement('div');
+  ansT3.style.cssText='font-size:11px;font-weight:700;color:var(--acc);text-transform:uppercase;letter-spacing:.5px;margin-bottom:.4rem;';
+  ansT3.textContent='Your Answer';
+  s3.appendChild(ansT3);
+  var ans3=document.createElement('div');
+  ans3.style.cssText='min-height:54px;border:2px dashed #b0b8c4;border-radius:10px;padding:8px;display:flex;flex-wrap:wrap;gap:7px;background:var(--sf);margin-bottom:.75rem;align-content:flex-start;';
+  s3.appendChild(ans3);
+  var fb3=document.createElement('div');
+  fb3.style.cssText='font-size:13px;font-weight:600;min-height:20px;margin-bottom:.5rem;';
+  s3.appendChild(fb3);
+  var key3=document.createElement('div');
+  key3.style.cssText='display:none;font-size:12px;color:#1E6B3C;font-style:italic;padding:6px 10px;background:#E3F5EB;border-radius:8px;border-left:3px solid #1E6B3C;margin-bottom:.5rem;';
+  s3.appendChild(key3);
+  var chunkColorMap={};
+  chunks3.forEach(function(chunk,ci){chunkColorMap[chunk]=CHUNK_PALETTE[ci%CHUNK_PALETTE.length];});
+  function makeChunkChip(text){
+    var c=chunkColorMap[text]||CHUNK_PALETTE[0];
+    var chip=document.createElement('span');
+    chip.textContent=text;
+    chip.style.cssText='display:inline-block;padding:8px 14px;background:'+c.bg+';border:2px solid '+c.border+';border-radius:12px;font-size:13px;color:'+c.color+';cursor:pointer;user-select:none;font-family:inherit;transition:opacity .15s;font-weight:600;line-height:1.4;';
+    chip.addEventListener('click',function(){
+      if(answered[idx]!==undefined||chip.dataset.locked) return;
+      if(chip.parentElement===bank3) ans3.appendChild(chip);
+      else if(chip.parentElement===ans3) bank3.appendChild(chip);
+    });
+    return chip;
+  }
+  shuffledChunks.forEach(function(t){bank3.appendChild(makeChunkChip(t));});
+  var btnRow3=document.createElement('div');
+  btnRow3.style.cssText='display:flex;gap:8px;flex-wrap:wrap;';
+  var chkBtn3=document.createElement('button');
+  chkBtn3.textContent='Check ✓';
+  chkBtn3.className='btn btn-p';
+  chkBtn3.style.fontSize='13px';
+  chkBtn3.type='button';
+  chkBtn3.addEventListener('click',function(){
+    if(answered[idx]!==undefined) return;
+    var placed=[].slice.call(ans3.querySelectorAll('span'));
+    if(placed.length===0){fb3.textContent='Move chunks first!';fb3.style.color='var(--red)';return;}
+    var reconstructed=placed.map(function(c){return c.textContent;}).join(' ');
+    var ok3=(reconstructed===ex);
+    answered[idx]=reconstructed;
+    var all3=[].slice.call(bank3.querySelectorAll('span')).concat([].slice.call(ans3.querySelectorAll('span')));
+    all3.forEach(function(c){c.dataset.locked='1';c.style.cursor='default';});
+    if(ok3){correct++;fb3.textContent='✓ Perfect!';fb3.style.color='var(--grn)';ans3.style.borderColor='var(--grn)';ans3.style.background='var(--grn-l)';}
+    else{wrong++;fb3.textContent='✗ Not quite — check the chunk order';fb3.style.color='var(--red)';ans3.style.borderColor='var(--red)';ans3.style.background='var(--red-l)';key3.textContent='✓ '+ex;key3.style.display='block';}
+    chkBtn3.disabled=true;rstBtn3.disabled=true;
+    updateLive();
+    if(document.getElementById('s-rv').checked) showExpl(idx,word,ko,pos,ex);
+  });
+  var rstBtn3=document.createElement('button');
+  rstBtn3.textContent='Reset ↺';
+  rstBtn3.className='btn btn-s';
+  rstBtn3.style.fontSize='13px';
+  rstBtn3.type='button';
+  rstBtn3.addEventListener('click',function(){
+    if(answered[idx]!==undefined) return;
+    [].slice.call(ans3.querySelectorAll('span')).forEach(function(c){bank3.appendChild(c);});
+    fb3.textContent='';fb3.style.color='';key3.style.display='none';key3.textContent='';
+    ans3.style.borderColor='#b0b8c4';ans3.style.background='var(--sf)';
+  });
+  btnRow3.appendChild(chkBtn3);btnRow3.appendChild(rstBtn3);
+  s3.appendChild(btnRow3);
+  div.appendChild(s3);
+}
+
+function printResult(){
+  var style=document.createElement('style');
+  style.id='print-temp';
+  style.textContent='@media print { #s-score { display:block !important; } }';
+  document.head.appendChild(style);
+  window.print();
+  setTimeout(function(){var el=document.getElementById('print-temp');if(el) el.parentNode.removeChild(el);},1000);
+}
+</script>
+</body>
+</html>
