@@ -1590,12 +1590,7 @@ function makeQCard(w,idx){
       wp.textContent=DEFS[word]?DEFS[word]:'(see example below)';
     }
     div.appendChild(wp);
-    if(type==='write_def'){
-      var hint=document.createElement('div');
-      hint.className='qhint';
-      hint.textContent=ex;
-      div.appendChild(hint);
-    }
+
     var wfrow=document.createElement('div');
     wfrow.className='frow';
     var winp=document.createElement('input');
