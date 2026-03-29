@@ -246,7 +246,7 @@ input[type=text]:focus{border-color:var(--acc);}
       <div class="score-emoji" id="sc-emoji"></div>
       <div class="score-big" id="sc-pct"></div>
       <div class="score-sub" id="sc-sub"></div>
-      <div style="font-size:12px;color:var(--ink3);text-align:center;margin-bottom:.75rem;" id="sc-datetime"></div>
+      <div style="font-size:12px;color:var(--ink2);font-weight:700;text-align:center;margin-bottom:.75rem;" id="sc-datetime"></div>
       <div id="sc-encourage" style="font-size:13px;font-weight:600;padding:10px 14px;border-radius:10px;text-align:center;margin-bottom:1rem;border:1.5px solid;"></div>
       <div class="sgrid" id="sc-grid"></div>
     </div>
@@ -900,7 +900,6 @@ var DEFS={
 };
 
 var KO_SENT={};
-
 // ─── STATE ─────────────────────────────────────
 var ALL_Q=[...new Set(WL.map(function(w){return w[4];}))].sort(function(a,b){
   var n1=parseInt(a),n2=parseInt(b);return n1-n2;
@@ -908,42 +907,17 @@ var ALL_Q=[...new Set(WL.map(function(w){return w[4];}))].sort(function(a,b){
 var tSel=new Set(),sSel=new Set();
 var quizWords=[],answered={},correct=0,wrong=0,quizMode='mc';
 
-// ─── TABS ───────────────────────────────────────
-document.addEventListener('DOMContentLoaded',function(){
-  document.getElementById('tab-btn-teacher').addEventListener('click',function(){
-    document.querySelectorAll('.nav-tab').forEach(function(b){b.classList.remove('active');});
-    document.querySelectorAll('.panel').forEach(function(p){p.classList.remove('active');});
-    this.classList.add('active');
-    document.getElementById('panel-teacher').classList.add('active');
-  });
-  document.getElementById('tab-btn-student').addEventListener('click',function(){
-    document.querySelectorAll('.nav-tab').forEach(function(b){b.classList.remove('active');});
-    document.querySelectorAll('.panel').forEach(function(p){p.classList.remove('active');});
-    this.classList.add('active');
-    document.getElementById('panel-student').classList.add('active');
-  });
-  buildGrid('tq-grid',tSel,'tq-ctr');
-  buildGrid('sq-grid',sSel,'sq-ctr');
-  toggleCat('vocab');
-  var ni=document.getElementById('s-name');
-  if(ni) ni.addEventListener('input',function(){this.style.borderColor='var(--bds)';});
-
-  document.getElementById('tq-all').addEventListener('click',function(){
-    document.querySelectorAll('#tq-grid .qbtn').forEach(function(b){b.classList.add('on');tSel.add(b.textContent);});
-    updateCtr(tSel,'tq-ctr');
-  });
-  document.getElementById('tq-clr').addEventListener('click',function(){
-    document.querySelectorAll('#tq-grid .qbtn').forEach(function(b){b.classList.remove('on');});
-    tSel.clear();updateCtr(tSel,'tq-ctr');
-  });
-  document.getElementById('sq-all').addEventListener('click',function(){
-    document.querySelectorAll('#sq-grid .qbtn').forEach(function(b){b.classList.add('on');sSel.add(b.textContent);});
-    updateCtr(sSel,'sq-ctr');
-  });
-  document.getElementById('sq-clr').addEventListener('click',function(){
-    document.querySelectorAll('#sq-grid .qbtn').forEach(function(b){b.classList.remove('on');});
-    sSel.clear();updateCtr(sSel,'sq-ctr');
-  });
+// ─── GLOBAL HELPERS (must be global for onclick attributes) ────────────
+function toggleCat(cat){
+  var body=document.getElementById('body-'+cat);
+  var arrow=document.getElementById('arrow-'+cat);
+  var card=document.getElementById('cat-'+cat);
+  if(!body||!arrow||!card) return;
+  var isOpen=body.style.display!=='none';
+  body.style.display=isOpen?'none':'block';
+  arrow.textContent=isOpen?'▶':'▼';
+  card.classList.toggle('cat-active',!isOpen);
+}
 
 function shuffle(a){var b=[].concat(a);for(var i=b.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=b[i];b[i]=b[j];b[j]=t;}return b;}
 
@@ -969,6 +943,34 @@ function showStatus(id,msg,cls){
   el.textContent=msg;el.className='st '+cls;el.style.display='block';
 }
 
+function buildGrid(cid,selSet,ctrId){
+  var g=document.getElementById(cid);
+  if(!g) return;
+  ALL_Q.forEach(function(q){
+    var b=document.createElement('button');
+    b.className='qbtn';
+    b.textContent=q;
+    b.addEventListener('click',function(){
+      b.classList.toggle('on');
+      if(selSet.has(q)) selSet.delete(q);
+      else selSet.add(q);
+      updateCtr(selSet,ctrId);
+    });
+    g.appendChild(b);
+  });
+}
+
+function updateCtr(sel,ctrId){
+  var n=WL.filter(function(w){return sel.has(w[4]);}).length;
+  var el=document.getElementById(ctrId);
+  if(el) el.innerHTML='<strong>'+n+'</strong> words from <strong>'+sel.size+'</strong> round(s)';
+}
+
+function tGetWords(){
+  var w=WL.filter(function(x){return tSel.has(x[4]);});
+  return document.getElementById('t-sh').checked?shuffle(w):w;
+}
+
 function getDecoys(correctKo,count){
   var pool=WL.filter(function(w){return w[2]!==correctKo;}).map(function(w){return w[2];});
   return shuffle(pool).slice(0,count||3);
@@ -979,165 +981,6 @@ function getWordDecoys(correctWord,count){
   return shuffle(pool).slice(0,count||3);
 }
 
-// ─── TEACHER ───────────────────────────────────
-function tGetWords(){
-  var w=WL.filter(function(x){return tSel.has(x[4]);});
-  return document.getElementById('t-sh').checked?shuffle(w):w;
-}
-
-document.getElementById('t-prev-btn').addEventListener('click',function(){
-  var words=tGetWords();
-  if(!words.length){showStatus('t-status','Please select at least one round.','er');return;}
-  var oKo=document.getElementById('t-ko').checked;
-  var oEn=document.getElementById('t-en').checked;
-  var oFi=document.getElementById('t-fi').checked;
-  var oPo=document.getElementById('t-po').checked;
-  if(!oKo&&!oEn&&!oFi&&!oPo){showStatus('t-status','Select at least one column.','er');return;}
-  var h='<table style="width:100%;border-collapse:collapse;"><tr style="background:var(--acc);color:#fff;">';
-  h+='<th style="padding:5px 7px;font-size:11px;">#</th><th style="padding:5px 7px;font-size:11px;">회</th><th style="padding:5px 7px;font-size:11px;">Word</th>';
-  if(oKo) h+='<th style="padding:5px 7px;font-size:11px;">① Korean</th>';
-  if(oEn) h+='<th style="padding:5px 7px;font-size:11px;">② English</th>';
-  if(oFi) h+='<th style="padding:5px 7px;font-size:11px;">③ Fill-blank</th>';
-  if(oPo) h+='<th style="padding:5px 7px;font-size:11px;">④ POS</th>';
-  h+='</tr>';
-  words.slice(0,8).forEach(function(row,i){
-    var bg=i%2?'background:var(--sf2)':'';
-    h+='<tr style="'+bg+'"><td style="padding:4px 7px;">'+( i+1)+'</td>';
-    h+='<td style="padding:4px 7px;font-size:10px;font-weight:700;">'+row[4]+'</td>';
-    h+='<td style="padding:4px 7px;font-weight:600;">'+row[0]+'</td>';
-    if(oKo) h+='<td style="padding:4px 7px;color:var(--ink3);">___________</td>';
-    if(oEn) h+='<td style="padding:4px 7px;color:var(--ink3);">___________</td>';
-    if(oFi) h+='<td style="padding:4px 7px;font-size:11px;color:var(--ink2);">'+makeFill(row[0],row[3]).substring(0,55)+'...</td>';
-    if(oPo) h+='<td style="padding:4px 7px;color:var(--ink3);">___________</td>';
-    h+='</tr>';
-  });
-  if(words.length>8) h+='<tr><td colspan="10" style="padding:4px 7px;color:var(--ink3);font-size:11px;">...and '+(words.length-8)+' more</td></tr>';
-  h+='</table>';
-  document.getElementById('t-preview').innerHTML=h;
-  showStatus('t-status','Preview: '+words.length+' words from '+[...tSel].join(', '),'ok');
-});
-
-document.getElementById('t-gen-btn').addEventListener('click',function(){
-  var words=tGetWords();
-  if(!words.length){showStatus('t-status','Please select at least one round.','er');return;}
-  var oKo=document.getElementById('t-ko').checked;
-  var oEn=document.getElementById('t-en').checked;
-  var oFi=document.getElementById('t-fi').checked;
-  var oPo=document.getElementById('t-po').checked;
-  var oKy=document.getElementById('t-ky').checked;
-  var cls=document.getElementById('t-cls').value||'';
-  if(!oKo&&!oEn&&!oFi&&!oPo){showStatus('t-status','Select at least one column.','er');return;}
-  var wb=XLSX.utils.book_new();
-  var qLabel=[...tSel].sort().join(', ');
-  var today=new Date().toISOString().slice(0,10);
-  var qs=[
-    ['EBS 수능특강 Q 미니모의고사 영어 Jump — Vocabulary Quiz'],
-    ['Rounds: '+qLabel+'   |   Total: '+words.length+' words   |   Date: '+today+(cls?' | Class: '+cls:'')],
-    ['Name:','','Score:','/ '+words.length*[oKo,oEn,oFi,oPo].filter(Boolean).length],
-    []
-  ];
-  var hdr=['#','Round','Word / Phrase'];
-  if(oKo) hdr.push('① Korean meaning');
-  if(oEn) hdr.push('② English word');
-  if(oFi) hdr.push('③ Fill in the blank');
-  if(oPo) hdr.push('④ Part of speech');
-  qs.push(hdr);
-  words.forEach(function(w,i){
-    var row=[i+1,w[4],w[0]];
-    if(oKo) row.push('');
-    if(oEn) row.push('');
-    if(oFi) row.push(makeFill(w[0],w[3]));
-    if(oPo) row.push('');
-    qs.push(row);
-  });
-  var wsQ=XLSX.utils.aoa_to_sheet(qs);
-  var wc=[{wch:4},{wch:6},{wch:36}];
-  if(oKo) wc.push({wch:30});
-  if(oEn) wc.push({wch:30});
-  if(oFi) wc.push({wch:70});
-  if(oPo) wc.push({wch:16});
-  wsQ['!cols']=wc;
-  XLSX.utils.book_append_sheet(wb,wsQ,'Quiz');
-  if(oKy){
-    var ks=[['ANSWER KEY — EBS 수능특강 Q Jump Vocabulary Quiz'],['Rounds: '+qLabel+'   |   '+words.length+' words'],[]];
-    var kh=['#','Round','Word','POS'];
-    if(oKo) kh.push('① Korean');
-    if(oEn) kh.push('② English');
-    if(oFi) kh.push('③ Fill answer');
-    if(oPo) kh.push('④ POS');
-    ks.push(kh);
-    words.forEach(function(w,i){
-      var r=[i+1,w[4],w[0],w[1]];
-      if(oKo) r.push(w[2]);
-      if(oEn) r.push(w[0]);
-      if(oFi) r.push(w[0]);
-      if(oPo) r.push(w[1]);
-      ks.push(r);
-    });
-    ks.push([]);ks.push(['— Example Sentences —']);
-    words.forEach(function(w,i){ks.push([i+1,w[0],w[3]]);});
-    var wsK=XLSX.utils.aoa_to_sheet(ks);
-    wsK['!cols']=[{wch:4},{wch:6},{wch:36},{wch:14},{wch:30},{wch:30},{wch:70},{wch:16}];
-    XLSX.utils.book_append_sheet(wb,wsK,'Answer Key');
-  }
-  var rs=[['Word Reference'],[], ['#','Round','Word','POS','Korean','Example Sentence']];
-  words.forEach(function(w,i){rs.push([i+1,w[4],w[0],w[1],w[2],w[3]]);});
-  var wsR=XLSX.utils.aoa_to_sheet(rs);
-  wsR['!cols']=[{wch:4},{wch:6},{wch:36},{wch:16},{wch:32},{wch:80}];
-  XLSX.utils.book_append_sheet(wb,wsR,'Word Reference');
-  var fname='vocab_jump_'+qLabel.replace(/,\s*/g,'+')+'_'+today+'.xlsx';
-  XLSX.writeFile(wb,fname);
-  showStatus('t-status','Downloaded: '+fname+' ('+words.length+' words)','ok');
-});
-
-// ─── STUDENT: MODE SELECT ──────────────────────
-['mc','fi','fi2','w1','w2','scr','scr2','scr3'].forEach(function(m){
-  var el=document.getElementById('mode-'+m);
-  if(!el) return;
-  el.addEventListener('click',function(e){
-    e.stopPropagation();
-    quizMode=m;
-    ['mc','fi','fi2','w1','w2','scr','scr2','scr3'].forEach(function(id){
-      var el2=document.getElementById('mode-'+id);
-      if(el2) el2.classList.toggle('sel',id===m);
-    });
-  });
-});
-
-function toggleCat(cat){
-  var body=document.getElementById('body-'+cat);
-  var arrow=document.getElementById('arrow-'+cat);
-  var card=document.getElementById('cat-'+cat);
-  var isOpen=body.style.display!=='none';
-  body.style.display=isOpen?'none':'block';
-  arrow.textContent=isOpen?'▶':'▼';
-  card.classList.toggle('cat-active',!isOpen);
-}
-
-// ─── STUDENT: START ────────────────────────────
-document.getElementById('s-start').addEventListener('click',function(){
-  var nameVal=document.getElementById('s-name').value.trim();
-  if(!nameVal){
-    var inp=document.getElementById('s-name');
-    inp.style.borderColor='var(--red)';
-    inp.focus();
-    showStatus('s-status','이름을 입력해 주세요! Please enter your name first.','er');
-    return;
-  }
-  document.getElementById('s-name').style.borderColor='var(--bds)';
-  showStatus('s-status','','');
-  var words=WL.filter(function(w){return sSel.has(w[4]);});
-  if(words.length<4){showStatus('s-status','Please select at least 4 words (needed for multiple choice).','er');return;}
-  if(document.getElementById('s-sh').checked) words=shuffle(words);
-  quizWords=words;
-  answered={};correct=0;wrong=0;
-  document.getElementById('s-setup').style.display='none';
-  document.getElementById('s-quiz').style.display='block';
-  document.getElementById('s-score').style.display='none';
-  updateLive();
-  renderQuiz();
-});
-
 function updateLive(){
   var total=quizWords.length,done=correct+wrong;
   document.getElementById('ls-c').textContent=correct;
@@ -1147,7 +990,6 @@ function updateLive(){
   document.getElementById('prog').style.width=(total>0?done/total*100:0)+'%';
 }
 
-// ─── RENDER QUIZ ───────────────────────────────
 function renderQuiz(){
   var c=document.getElementById('q-container');
   c.innerHTML='';
@@ -1158,15 +1000,243 @@ function showExpl(idx,word,ko,pos,ex){
   var card=document.getElementById('card_'+idx);
   if(!card) return;
   var expl=card.querySelector('.expl');
-  if(!expl){
-    expl=document.createElement('div');
-    expl.className='expl';
-    card.appendChild(expl);
-  }
+  if(!expl){expl=document.createElement('div');expl.className='expl';card.appendChild(expl);}
   var def=DEFS[word]?'<span class="eng-def">💡 '+DEFS[word]+'</span><br>':'';
   expl.innerHTML=def+'<strong>'+word+'</strong> <span style="color:var(--ink3);">('+pos+')</span> — <span style="color:var(--grn);">'+ko+'</span><br><span style="font-style:italic;">'+ex+'</span>';
   expl.style.display='block';
 }
+
+function printResult(){
+  var style=document.createElement('style');
+  style.id='print-temp';
+  style.textContent='@media print { #s-score { display:block !important; } }';
+  document.head.appendChild(style);
+  window.print();
+  setTimeout(function(){var el=document.getElementById('print-temp');if(el) el.parentNode.removeChild(el);},1000);
+}
+
+// ─── SINGLE DOMContentLoaded ───────────────────
+document.addEventListener('DOMContentLoaded',function(){
+
+  // Tabs
+  document.getElementById('tab-btn-teacher').addEventListener('click',function(){
+    document.querySelectorAll('.nav-tab').forEach(function(b){b.classList.remove('active');});
+    document.querySelectorAll('.panel').forEach(function(p){p.classList.remove('active');});
+    this.classList.add('active');
+    document.getElementById('panel-teacher').classList.add('active');
+  });
+  document.getElementById('tab-btn-student').addEventListener('click',function(){
+    document.querySelectorAll('.nav-tab').forEach(function(b){b.classList.remove('active');});
+    document.querySelectorAll('.panel').forEach(function(p){p.classList.remove('active');});
+    this.classList.add('active');
+    document.getElementById('panel-student').classList.add('active');
+  });
+
+  // Build round grids
+  buildGrid('tq-grid',tSel,'tq-ctr');
+  buildGrid('sq-grid',sSel,'sq-ctr');
+  toggleCat('vocab');
+
+  var ni=document.getElementById('s-name');
+  if(ni) ni.addEventListener('input',function(){this.style.borderColor='var(--bds)';});
+
+  // Teacher round select/clear
+  document.getElementById('tq-all').addEventListener('click',function(){
+    document.querySelectorAll('#tq-grid .qbtn').forEach(function(b){b.classList.add('on');tSel.add(b.textContent);});
+    updateCtr(tSel,'tq-ctr');
+  });
+  document.getElementById('tq-clr').addEventListener('click',function(){
+    document.querySelectorAll('#tq-grid .qbtn').forEach(function(b){b.classList.remove('on');});
+    tSel.clear();updateCtr(tSel,'tq-ctr');
+  });
+  document.getElementById('sq-all').addEventListener('click',function(){
+    document.querySelectorAll('#sq-grid .qbtn').forEach(function(b){b.classList.add('on');sSel.add(b.textContent);});
+    updateCtr(sSel,'sq-ctr');
+  });
+  document.getElementById('sq-clr').addEventListener('click',function(){
+    document.querySelectorAll('#sq-grid .qbtn').forEach(function(b){b.classList.remove('on');});
+    sSel.clear();updateCtr(sSel,'sq-ctr');
+  });
+
+  // Student mode select
+  ['mc','fi','fi2','w1','w2','scr','scr2','scr3'].forEach(function(m){
+    var el=document.getElementById('mode-'+m);
+    if(!el) return;
+    el.addEventListener('click',function(e){
+      e.stopPropagation();
+      quizMode=m;
+      ['mc','fi','fi2','w1','w2','scr','scr2','scr3'].forEach(function(id){
+        var el2=document.getElementById('mode-'+id);
+        if(el2) el2.classList.toggle('sel',id===m);
+      });
+    });
+  });
+
+  // Teacher preview
+  document.getElementById('t-prev-btn').addEventListener('click',function(){
+    var words=tGetWords();
+    if(!words.length){showStatus('t-status','Please select at least one round.','er');return;}
+    var oKo=document.getElementById('t-ko').checked;
+    var oEn=document.getElementById('t-en').checked;
+    var oFi=document.getElementById('t-fi').checked;
+    var oPo=document.getElementById('t-po').checked;
+    if(!oKo&&!oEn&&!oFi&&!oPo){showStatus('t-status','Select at least one column.','er');return;}
+    var h='<table style="width:100%;border-collapse:collapse;"><tr style="background:var(--acc);color:#fff;">';
+    h+='<th style="padding:5px 7px;font-size:11px;">#</th><th style="padding:5px 7px;font-size:11px;">회</th><th style="padding:5px 7px;font-size:11px;">Word</th>';
+    if(oKo) h+='<th style="padding:5px 7px;font-size:11px;">① Korean</th>';
+    if(oEn) h+='<th style="padding:5px 7px;font-size:11px;">② English</th>';
+    if(oFi) h+='<th style="padding:5px 7px;font-size:11px;">③ Fill-blank</th>';
+    if(oPo) h+='<th style="padding:5px 7px;font-size:11px;">④ POS</th>';
+    h+='</tr>';
+    words.slice(0,8).forEach(function(row,i){
+      var bg=i%2?'background:var(--sf2)':'';
+      h+='<tr style="'+bg+'"><td style="padding:4px 7px;">'+(i+1)+'</td>';
+      h+='<td style="padding:4px 7px;font-size:10px;font-weight:700;">'+row[4]+'</td>';
+      h+='<td style="padding:4px 7px;font-weight:600;">'+row[0]+'</td>';
+      if(oKo) h+='<td style="padding:4px 7px;color:var(--ink3);">___________</td>';
+      if(oEn) h+='<td style="padding:4px 7px;color:var(--ink3);">___________</td>';
+      if(oFi) h+='<td style="padding:4px 7px;font-size:11px;color:var(--ink2);">'+makeFill(row[0],row[3]).substring(0,55)+'...</td>';
+      if(oPo) h+='<td style="padding:4px 7px;color:var(--ink3);">___________</td>';
+      h+='</tr>';
+    });
+    if(words.length>8) h+='<tr><td colspan="10" style="padding:4px 7px;color:var(--ink3);font-size:11px;">...and '+(words.length-8)+' more</td></tr>';
+    h+='</table>';
+    document.getElementById('t-preview').innerHTML=h;
+    showStatus('t-status','Preview: '+words.length+' words from '+[...tSel].join(', '),'ok');
+  });
+
+  // Teacher download
+  document.getElementById('t-gen-btn').addEventListener('click',function(){
+    var words=tGetWords();
+    if(!words.length){showStatus('t-status','Please select at least one round.','er');return;}
+    var oKo=document.getElementById('t-ko').checked;
+    var oEn=document.getElementById('t-en').checked;
+    var oFi=document.getElementById('t-fi').checked;
+    var oPo=document.getElementById('t-po').checked;
+    var oKy=document.getElementById('t-ky').checked;
+    var cls=document.getElementById('t-cls').value||'';
+    if(!oKo&&!oEn&&!oFi&&!oPo){showStatus('t-status','Select at least one column.','er');return;}
+    var wb=XLSX.utils.book_new();
+    var qLabel=[...tSel].sort().join(', ');
+    var today=new Date().toISOString().slice(0,10);
+    var qs=[
+      ['EBS 수능특강 Q 미니모의고사 영어 Jump — Vocabulary Quiz'],
+      ['Rounds: '+qLabel+'   |   Total: '+words.length+' words   |   Date: '+today+(cls?' | Class: '+cls:'')],
+      ['Name:','','Score:','/ '+words.length*[oKo,oEn,oFi,oPo].filter(Boolean).length],
+      []
+    ];
+    var hdr=['#','Round','Word / Phrase'];
+    if(oKo) hdr.push('① Korean meaning');
+    if(oEn) hdr.push('② English word');
+    if(oFi) hdr.push('③ Fill in the blank');
+    if(oPo) hdr.push('④ Part of speech');
+    qs.push(hdr);
+    words.forEach(function(w,i){
+      var row=[i+1,w[4],w[0]];
+      if(oKo) row.push('');
+      if(oEn) row.push('');
+      if(oFi) row.push(makeFill(w[0],w[3]));
+      if(oPo) row.push('');
+      qs.push(row);
+    });
+    var wsQ=XLSX.utils.aoa_to_sheet(qs);
+    var wc=[{wch:4},{wch:6},{wch:36}];
+    if(oKo) wc.push({wch:30});
+    if(oEn) wc.push({wch:30});
+    if(oFi) wc.push({wch:70});
+    if(oPo) wc.push({wch:16});
+    wsQ['!cols']=wc;
+    XLSX.utils.book_append_sheet(wb,wsQ,'Quiz');
+    if(oKy){
+      var ks=[['ANSWER KEY — EBS 수능특강 Q Jump Vocabulary Quiz'],['Rounds: '+qLabel+'   |   '+words.length+' words'],[]];
+      var kh=['#','Round','Word','POS'];
+      if(oKo) kh.push('① Korean');
+      if(oEn) kh.push('② English');
+      if(oFi) kh.push('③ Fill answer');
+      if(oPo) kh.push('④ POS');
+      ks.push(kh);
+      words.forEach(function(w,i){
+        var r=[i+1,w[4],w[0],w[1]];
+        if(oKo) r.push(w[2]);
+        if(oEn) r.push(w[0]);
+        if(oFi) r.push(w[0]);
+        if(oPo) r.push(w[1]);
+        ks.push(r);
+      });
+      ks.push([]);ks.push(['— Example Sentences —']);
+      words.forEach(function(w,i){ks.push([i+1,w[0],w[3]]);});
+      var wsK=XLSX.utils.aoa_to_sheet(ks);
+      wsK['!cols']=[{wch:4},{wch:6},{wch:36},{wch:14},{wch:30},{wch:30},{wch:70},{wch:16}];
+      XLSX.utils.book_append_sheet(wb,wsK,'Answer Key');
+    }
+    var rs=[['Word Reference'],[],['#','Round','Word','POS','Korean','Example Sentence']];
+    words.forEach(function(w,i){rs.push([i+1,w[4],w[0],w[1],w[2],w[3]]);});
+    var wsR=XLSX.utils.aoa_to_sheet(rs);
+    wsR['!cols']=[{wch:4},{wch:6},{wch:36},{wch:16},{wch:32},{wch:80}];
+    XLSX.utils.book_append_sheet(wb,wsR,'Word Reference');
+    var fname='vocab_jump_'+qLabel.replace(/,\s*/g,'+')+'_'+today+'.xlsx';
+    XLSX.writeFile(wb,fname);
+    showStatus('t-status','Downloaded: '+fname+' ('+words.length+' words)','ok');
+  });
+
+  // Student start
+  document.getElementById('s-start').addEventListener('click',function(){
+    var nameVal=document.getElementById('s-name').value.trim();
+    if(!nameVal){
+      var inp=document.getElementById('s-name');
+      inp.style.borderColor='var(--red)';inp.focus();
+      showStatus('s-status','이름을 입력해 주세요! Please enter your name first.','er');
+      return;
+    }
+    document.getElementById('s-name').style.borderColor='var(--bds)';
+    showStatus('s-status','','');
+    var words=WL.filter(function(w){return sSel.has(w[4]);});
+    if(words.length<4){showStatus('s-status','Please select at least 4 words (needed for multiple choice).','er');return;}
+    if(document.getElementById('s-sh').checked) words=shuffle(words);
+    quizWords=words;answered={};correct=0;wrong=0;
+    document.getElementById('s-setup').style.display='none';
+    document.getElementById('s-quiz').style.display='block';
+    document.getElementById('s-score').style.display='none';
+    updateLive();renderQuiz();
+  });
+
+  // Reveal all
+  document.getElementById('s-reveal').addEventListener('click',function(){
+    quizWords.forEach(function(w,i){
+      if(answered[i]!==undefined) return;
+      answered[i]='revealed';
+      var card=document.getElementById('card_'+i);
+      if(!card) return;
+      card.querySelectorAll('.obtn').forEach(function(b){
+        b.disabled=true;
+        var text=b.textContent.slice(3);
+        if(text===w[2]||text===w[0]) b.classList.add('reveal');
+      });
+      var inp=document.getElementById('fi_'+i);
+      if(inp){inp.disabled=true;inp.value=w[0];inp.classList.add('reveal');}
+      showExpl(i,w[0],w[2],w[1],w[3]);
+    });
+    updateLive();
+  });
+
+  // Results
+  document.getElementById('s-results').addEventListener('click',showScore);
+
+  // Retry / New quiz
+  document.getElementById('sc-retry').addEventListener('click',function(){
+    document.getElementById('s-score').style.display='none';
+    answered={};correct=0;wrong=0;
+    if(document.getElementById('s-sh').checked) quizWords=shuffle(quizWords);
+    document.getElementById('s-quiz').style.display='block';
+    updateLive();renderQuiz();
+  });
+  document.getElementById('sc-new').addEventListener('click',function(){
+    document.getElementById('s-score').style.display='none';
+    document.getElementById('s-setup').style.display='block';
+  });
+
+}); // end DOMContentLoaded
+
 
 function makeQCard(w,idx){
   var word=w[0],pos=w[1],ko=w[2],ex=w[3],q=w[4];
@@ -1520,301 +1590,6 @@ document.getElementById('sc-new').addEventListener('click',function(){
   document.getElementById('s-score').style.display='none';
   document.getElementById('s-setup').style.display='block';
 });
-});
-
-function buildGrid(cid,selSet,ctrId){
-  var g=document.getElementById(cid);
-  ALL_Q.forEach(function(q){
-    var b=document.createElement('button');
-    b.className='qbtn';
-    b.textContent=q;
-    b.addEventListener('click',function(){
-      b.classList.toggle('on');
-      if(selSet.has(q)) selSet.delete(q);
-      else selSet.add(q);
-      updateCtr(selSet,ctrId);
-    });
-    g.appendChild(b);
-  });
-}
-
-function updateCtr(sel,ctrId){
-  var n=WL.filter(function(w){return sel.has(w[4]);}).length;
-  var el=document.getElementById(ctrId);
-  el.innerHTML='<strong>'+n+'</strong> words from <strong>'+sel.size+'</strong> round(s)';
-}
-
-// ─── POS TAGGER ────────────────────────────────
-var POS_COLORS={
-  'noun':{bg:'#DBEAFE',border:'#3B82F6',color:'#1E3A8A'},
-  'verb':{bg:'#DCFCE7',border:'#22C55E',color:'#14532D'},
-  'adj':{bg:'#FEF3C7',border:'#F59E0B',color:'#78350F'},
-  'other':{bg:'#F1F5F9',border:'#94A3B8',color:'#334155'}
-};
-function tagToken(token){
-  var t=token.toLowerCase().replace(/[.,!?;:'"()]/g,'');
-  if(/^[.,!?;:'"()\-]+$/.test(token)) return 'other';
-  if(/^(a|an|the|this|that|these|those|it|its|they|their|we|our|you|your|he|his|she|her|i|my)$/.test(t)) return 'other';
-  if(/^(in|on|at|to|for|of|from|with|by|as|into|onto|upon|about|over|under|through|between|among|across|along|around|behind|before|after|during|within|without|against|toward|towards|per|via|near|since|until|up|down|off|out|past)$/.test(t)) return 'other';
-  if(/^(and|or|but|so|yet|nor|although|because|since|while|if|when|where|that|which|who|whom|whose|what|how|whether|than|as|both|either|neither|not|also|however|therefore|thus|moreover|meanwhile)$/.test(t)) return 'other';
-  if(/^(is|are|was|were|be|been|being|have|has|had|do|does|did|will|would|shall|should|may|might|must|can|could)$/.test(t)) return 'verb';
-  if(/(?:ing|ed|ize|ise|ify|en|ate)$/.test(t)&&t.length>4) return 'verb';
-  if(/(?:ly|ful|less|ous|ive|al|ical|able|ible|ent|ant|ish)$/.test(t)) return 'adj';
-  if(/(?:tion|sion|ment|ness|ity|ance|ence|ship|hood|dom|ism|ist|er|or|ure|age)$/.test(t)&&t.length>4) return 'noun';
-  if(/^[A-Z]/.test(token)&&token!==token.toUpperCase()) return 'noun';
-  return 'noun';
-}
-var CHUNK_PALETTE=[
-  {bg:'#DBEAFE',border:'#3B82F6',color:'#1E3A8A'},
-  {bg:'#DCFCE7',border:'#22C55E',color:'#14532D'},
-  {bg:'#FEF3C7',border:'#F59E0B',color:'#78350F'},
-  {bg:'#FCE7F3',border:'#EC4899',color:'#831843'},
-  {bg:'#EDE9FE',border:'#8B5CF6',color:'#3B0764'},
-  {bg:'#FFEDD5',border:'#F97316',color:'#7C2D12'},
-  {bg:'#CFFAFE',border:'#06B6D4',color:'#164E63'},
-  {bg:'#F0FDF4',border:'#4ADE80',color:'#166534'}
-];
-function chunkSentence(sentence){
-  var words=sentence.split(' ');
-  var chunks=[];
-  var i=0;
-  while(i<words.length){
-    var w=words[i];
-    var wl=w.toLowerCase().replace(/[.,!?;:'"()]/g,'');
-    if(/^(a|an|the|this|that|these|those|my|your|his|her|its|our|their|no|every|each|any|some)$/.test(wl)){
-      var chunk=[w];
-      if(i+1<words.length) chunk.push(words[i+1]);
-      if(i+2<words.length){
-        var nx=words[i+2].toLowerCase().replace(/[.,!?;:'"()]/g,'');
-        if(!/^(is|are|was|were|be|have|has|had|will|would|can|could|should|may|might|must|to|that|which|who|in|on|at|of|by|from|with|for|and|or|but|,|.)$/.test(nx)){chunk.push(words[i+2]);i+=3;}
-        else{i+=2;}
-      }else{i+=2;}
-      chunks.push(chunk.join(' '));
-    } else if(/^(in|on|at|to|for|of|from|with|by|into|onto|about|over|under|through|between|among|across|along|around|behind|before|after|during|without|against|toward|towards|near|since|until)$/.test(wl)){
-      var chunk2=[w];
-      if(i+1<words.length) chunk2.push(words[i+1]);
-      if(i+2<words.length){
-        var nx2=words[i+2].toLowerCase().replace(/[.,!?;:'"()]/g,'');
-        if(!/^(in|on|at|to|for|of|from|with|by|and|or|but|,|.|that|which|who|is|are|was|were|will|would|can|could|should|may|might|must)$/.test(nx2)){chunk2.push(words[i+2]);i+=3;}
-        else{i+=2;}
-      }else{i+=2;}
-      chunks.push(chunk2.join(' '));
-    } else if(/^(is|are|was|were|be|been|being|have|has|had|will|would|shall|should|may|might|must|can|could|do|does|did|not|never|also|often|usually|always|sometimes)$/.test(wl)){
-      var chunk3=[w];
-      if(i+1<words.length) chunk3.push(words[i+1]);
-      i+=2;
-      chunks.push(chunk3.join(' '));
-    } else {
-      if(i+1<words.length){
-        var nx3=words[i+1].toLowerCase().replace(/[.,!?;:'"()]/g,'');
-        if(/(?:ly|fully|lessly|ingly)$/.test(nx3)||/^(very|quite|rather|extremely|highly|deeply|truly|really|absolutely|completely|totally)$/.test(nx3)){
-          chunks.push(w+' '+words[i+1]);i+=2;
-        }else{chunks.push(w);i++;}
-      }else{chunks.push(w);i++;}
-    }
-  }
-  if(chunks.length<3){
-    chunks=[];
-    for(var j=0;j<words.length;j+=2){
-      if(j+1<words.length) chunks.push(words[j]+' '+words[j+1]);
-      else chunks.push(words[j]);
-    }
-  }
-  return chunks;
-}
-
-function makeScramble2Card(w,idx,div){
-  var word=w[0],pos=w[1],ko=w[2],ex=w[3];
-  var sd=document.createElement('div');
-  var swl=document.createElement('div');
-  swl.style.cssText='font-size:13px;font-weight:700;color:var(--acc);margin-bottom:4px;';
-  swl.textContent=word+' ('+pos+')';
-  sd.appendChild(swl);
-  var swk=document.createElement('div');
-  swk.style.cssText='font-size:12px;color:var(--grn);font-weight:600;margin-bottom:.75rem;';
-  swk.textContent='🇰🇷 '+ko;
-  sd.appendChild(swk);
-  var sInstr=document.createElement('div');
-  sInstr.style.cssText='font-size:11px;color:var(--ink3);margin-bottom:.6rem;';
-  sInstr.textContent='Words are colour-coded by part of speech. Click to build the sentence.';
-  sd.appendChild(sInstr);
-  var words_arr=ex.split(' ');
-  var shuffled=shuffle(words_arr.slice());
-  var safety=0;
-  while(shuffled.join(' ')===ex&&safety<15){shuffled=shuffle(words_arr.slice());safety++;}
-  var bankT=document.createElement('div');
-  bankT.style.cssText='font-size:11px;font-weight:700;color:var(--acc);text-transform:uppercase;letter-spacing:.5px;margin-bottom:.4rem;';
-  bankT.textContent='Word Bank';
-  sd.appendChild(bankT);
-  var bankZone=document.createElement('div');
-  bankZone.className='scr-zone';
-  sd.appendChild(bankZone);
-  var ansT=document.createElement('div');
-  ansT.style.cssText='font-size:11px;font-weight:700;color:var(--acc);text-transform:uppercase;letter-spacing:.5px;margin-bottom:.4rem;margin-top:.75rem;';
-  ansT.textContent='Your Sentence';
-  sd.appendChild(ansT);
-  var ansZone=document.createElement('div');
-  ansZone.className='scr-zone';
-  sd.appendChild(ansZone);
-  var fb=document.createElement('div');
-  fb.className='scr-feedback';
-  sd.appendChild(fb);
-  var keyDiv=document.createElement('div');
-  keyDiv.className='scr-key';
-  keyDiv.style.display='none';
-  sd.appendChild(keyDiv);
-  function makeColorChip(text){
-    var posType=tagToken(text);
-    var c=POS_COLORS[posType]||POS_COLORS['other'];
-    var chip=document.createElement('span');
-    chip.style.cssText='display:inline-block;padding:6px 11px;background:'+c.bg+';border:1.5px solid '+c.border+';border-radius:20px;font-size:13px;color:'+c.color+';cursor:pointer;user-select:none;font-family:inherit;transition:all .15s;margin:2px;';
-    chip.textContent=text;
-    chip.addEventListener('click',function(){
-      if(answered[idx]!==undefined||chip.dataset.locked) return;
-      if(chip.parentElement===bankZone) ansZone.appendChild(chip);
-      else if(chip.parentElement===ansZone) bankZone.appendChild(chip);
-    });
-    return chip;
-  }
-  shuffled.forEach(function(t){bankZone.appendChild(makeColorChip(t));});
-  var btnRow=document.createElement('div');
-  btnRow.style.cssText='display:flex;gap:8px;flex-wrap:wrap;margin-top:.5rem;';
-  var checkBtn=document.createElement('button');
-  checkBtn.textContent='Check ✓';
-  checkBtn.className='btn btn-p';
-  checkBtn.style.fontSize='13px';
-  checkBtn.type='button';
-  checkBtn.addEventListener('click',function(){
-    if(answered[idx]!==undefined) return;
-    var placed=[].slice.call(ansZone.querySelectorAll('span'));
-    if(placed.length===0){fb.textContent='Move words first!';fb.style.color='var(--red)';return;}
-    var attempt=placed.map(function(c){return c.textContent;}).join(' ');
-    var ok=(attempt===ex);
-    answered[idx]=attempt;
-    var allChips=[].slice.call(bankZone.querySelectorAll('span')).concat([].slice.call(ansZone.querySelectorAll('span')));
-    allChips.forEach(function(c){c.dataset.locked='1';c.style.cursor='default';});
-    if(ok){correct++;fb.textContent='✓ Perfect!';fb.classList.add('ok');ansZone.classList.add('correct-zone');}
-    else{wrong++;fb.textContent='✗ Not quite — check the word order';fb.classList.add('ng');ansZone.classList.add('wrong-zone');keyDiv.textContent='✓ '+ex;keyDiv.style.display='block';}
-    checkBtn.disabled=true;resetBtn.disabled=true;
-    updateLive();
-    if(document.getElementById('s-rv').checked) showExpl(idx,word,ko,pos,ex);
-  });
-  var resetBtn=document.createElement('button');
-  resetBtn.textContent='Reset ↺';
-  resetBtn.className='btn btn-s';
-  resetBtn.style.fontSize='13px';
-  resetBtn.type='button';
-  resetBtn.addEventListener('click',function(){
-    if(answered[idx]!==undefined) return;
-    [].slice.call(ansZone.querySelectorAll('span')).forEach(function(c){bankZone.appendChild(c);});
-    fb.textContent='';fb.className='scr-feedback';keyDiv.style.display='none';
-    ansZone.className='scr-zone';bankZone.className='scr-zone';
-  });
-  btnRow.appendChild(checkBtn);btnRow.appendChild(resetBtn);
-  sd.appendChild(btnRow);
-  div.appendChild(sd);
-}
-
-function makeScramble3Card(w,idx,div){
-  var word=w[0],pos=w[1],ko=w[2],ex=w[3];
-  var s3=document.createElement('div');
-  var swl3=document.createElement('div');
-  swl3.style.cssText='font-size:13px;font-weight:700;color:var(--acc);margin-bottom:4px;';
-  swl3.textContent=word+' ('+pos+')';
-  s3.appendChild(swl3);
-  var swk3=document.createElement('div');
-  swk3.style.cssText='font-size:12px;color:var(--grn);font-weight:600;margin-bottom:.75rem;';
-  swk3.textContent='🇰🇷 '+ko;
-  s3.appendChild(swk3);
-  var instr3=document.createElement('div');
-  instr3.style.cssText='font-size:11px;color:var(--ink3);margin-bottom:.6rem;';
-  instr3.textContent='Click a chunk to move it. Each colour is a phrase group.';
-  s3.appendChild(instr3);
-  var chunks3=chunkSentence(ex);
-  var shuffledChunks=chunks3.slice().sort(function(){return Math.random()-.5;});
-  var safety3=0;
-  while(shuffledChunks.join('|')===chunks3.join('|')&&safety3<15){shuffledChunks=chunks3.slice().sort(function(){return Math.random()-.5;});safety3++;}
-  var bankT3=document.createElement('div');
-  bankT3.style.cssText='font-size:11px;font-weight:700;color:var(--acc);text-transform:uppercase;letter-spacing:.5px;margin-bottom:.4rem;';
-  bankT3.textContent='Chunk Bank';
-  s3.appendChild(bankT3);
-  var bank3=document.createElement('div');
-  bank3.style.cssText='min-height:54px;border:2px dashed #b0b8c4;border-radius:10px;padding:8px;display:flex;flex-wrap:wrap;gap:7px;background:var(--sf);margin-bottom:.9rem;align-content:flex-start;';
-  s3.appendChild(bank3);
-  var ansT3=document.createElement('div');
-  ansT3.style.cssText='font-size:11px;font-weight:700;color:var(--acc);text-transform:uppercase;letter-spacing:.5px;margin-bottom:.4rem;';
-  ansT3.textContent='Your Answer';
-  s3.appendChild(ansT3);
-  var ans3=document.createElement('div');
-  ans3.style.cssText='min-height:54px;border:2px dashed #b0b8c4;border-radius:10px;padding:8px;display:flex;flex-wrap:wrap;gap:7px;background:var(--sf);margin-bottom:.75rem;align-content:flex-start;';
-  s3.appendChild(ans3);
-  var fb3=document.createElement('div');
-  fb3.style.cssText='font-size:13px;font-weight:600;min-height:20px;margin-bottom:.5rem;';
-  s3.appendChild(fb3);
-  var key3=document.createElement('div');
-  key3.style.cssText='display:none;font-size:12px;color:#1E6B3C;font-style:italic;padding:6px 10px;background:#E3F5EB;border-radius:8px;border-left:3px solid #1E6B3C;margin-bottom:.5rem;';
-  s3.appendChild(key3);
-  var chunkColorMap={};
-  chunks3.forEach(function(chunk,ci){chunkColorMap[chunk]=CHUNK_PALETTE[ci%CHUNK_PALETTE.length];});
-  function makeChunkChip(text){
-    var c=chunkColorMap[text]||CHUNK_PALETTE[0];
-    var chip=document.createElement('span');
-    chip.textContent=text;
-    chip.style.cssText='display:inline-block;padding:8px 14px;background:'+c.bg+';border:2px solid '+c.border+';border-radius:12px;font-size:13px;color:'+c.color+';cursor:pointer;user-select:none;font-family:inherit;transition:opacity .15s;font-weight:600;line-height:1.4;';
-    chip.addEventListener('click',function(){
-      if(answered[idx]!==undefined||chip.dataset.locked) return;
-      if(chip.parentElement===bank3) ans3.appendChild(chip);
-      else if(chip.parentElement===ans3) bank3.appendChild(chip);
-    });
-    return chip;
-  }
-  shuffledChunks.forEach(function(t){bank3.appendChild(makeChunkChip(t));});
-  var btnRow3=document.createElement('div');
-  btnRow3.style.cssText='display:flex;gap:8px;flex-wrap:wrap;';
-  var chkBtn3=document.createElement('button');
-  chkBtn3.textContent='Check ✓';
-  chkBtn3.className='btn btn-p';
-  chkBtn3.style.fontSize='13px';
-  chkBtn3.type='button';
-  chkBtn3.addEventListener('click',function(){
-    if(answered[idx]!==undefined) return;
-    var placed=[].slice.call(ans3.querySelectorAll('span'));
-    if(placed.length===0){fb3.textContent='Move chunks first!';fb3.style.color='var(--red)';return;}
-    var reconstructed=placed.map(function(c){return c.textContent;}).join(' ');
-    var ok3=(reconstructed===ex);
-    answered[idx]=reconstructed;
-    var all3=[].slice.call(bank3.querySelectorAll('span')).concat([].slice.call(ans3.querySelectorAll('span')));
-    all3.forEach(function(c){c.dataset.locked='1';c.style.cursor='default';});
-    if(ok3){correct++;fb3.textContent='✓ Perfect!';fb3.style.color='var(--grn)';ans3.style.borderColor='var(--grn)';ans3.style.background='var(--grn-l)';}
-    else{wrong++;fb3.textContent='✗ Not quite — check the chunk order';fb3.style.color='var(--red)';ans3.style.borderColor='var(--red)';ans3.style.background='var(--red-l)';key3.textContent='✓ '+ex;key3.style.display='block';}
-    chkBtn3.disabled=true;rstBtn3.disabled=true;
-    updateLive();
-    if(document.getElementById('s-rv').checked) showExpl(idx,word,ko,pos,ex);
-  });
-  var rstBtn3=document.createElement('button');
-  rstBtn3.textContent='Reset ↺';
-  rstBtn3.className='btn btn-s';
-  rstBtn3.style.fontSize='13px';
-  rstBtn3.type='button';
-  rstBtn3.addEventListener('click',function(){
-    if(answered[idx]!==undefined) return;
-    [].slice.call(ans3.querySelectorAll('span')).forEach(function(c){bank3.appendChild(c);});
-    fb3.textContent='';fb3.style.color='';key3.style.display='none';key3.textContent='';
-    ans3.style.borderColor='#b0b8c4';ans3.style.background='var(--sf)';
-  });
-  btnRow3.appendChild(chkBtn3);btnRow3.appendChild(rstBtn3);
-  s3.appendChild(btnRow3);
-  div.appendChild(s3);
-}
-
-function printResult(){
-  var style=document.createElement('style');
-  style.id='print-temp';
-  style.textContent='@media print { #s-score { display:block !important; } }';
-  document.head.appendChild(style);
-  window.print();
-  setTimeout(function(){var el=document.getElementById('print-temp');if(el) el.parentNode.removeChild(el);},1000);
-}
 </script>
 </body>
 </html>
