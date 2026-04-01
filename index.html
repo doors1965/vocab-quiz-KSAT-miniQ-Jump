@@ -106,6 +106,9 @@ input[type=text]:focus{border-color:var(--acc);}
 .scr-feedback.ok{color:var(--grn);}
 .scr-feedback.ng{color:var(--red);}
 .scr-key{font-size:12px;color:var(--ink2);font-style:italic;margin-top:5px;padding:6px 10px;background:var(--grn-l);border-radius:var(--r);border-left:3px solid var(--grn);}
+.stars{font-size:11px;margin-left:5px;vertical-align:middle;letter-spacing:1px;}
+.scr-word-label{font-size:13px;font-weight:700;color:var(--acc);margin-bottom:4px;}
+.scr-word-ko{font-size:12px;margin-bottom:.75rem;line-height:1.6;}
 @media(max-width:480px){
   .nav-title{font-size:12px;}
   .nav-tab{padding:12px 10px;font-size:11px;}
@@ -116,20 +119,16 @@ input[type=text]:focus{border-color:var(--acc);}
 </head>
 <body>
 <nav class="nav">
-  <span class="nav-title">EBS 수능특강 Q Jump 단어 Quiz</span>
-  <button class="nav-tab active" id="tab-btn-teacher">📋 Teacher</button>
-  <button class="nav-tab" id="tab-btn-student">🎯 Student</button>
+  <div class="nav-title">📚 EBS 수능특강 Q 미니모의고사 영어 Jump — 단어 Quiz</div>
+  <button class="nav-tab active" id="tab-btn-teacher">🖥 Teacher</button>
+  <button class="nav-tab" id="tab-btn-student">📱 Student</button>
 </nav>
 
 <!-- TEACHER PANEL -->
 <div class="panel active" id="panel-teacher">
   <div class="card">
-    <div class="ct">EBS 수능특강 Q 미니모의고사 영어 Jump — 단어 Quiz</div>
-    <p style="font-size:13px;color:var(--ink2);line-height:1.7;margin-bottom:.85rem;">
-      B1+ level vocabulary, phrasal verbs, and idioms extracted from all 14회.<br>
-      Select rounds → choose columns → generate a printable Excel quiz sheet.
-    </p>
-    <div class="ct" style="margin-top:.5rem;">Select rounds</div>
+    <div class="ct">Step 1 — Select rounds</div>
+
     <div class="qgrid" id="tq-grid"></div>
     <div style="display:flex;gap:10px;margin-bottom:.5rem;">
       <button class="lbtn" id="tq-all">Select all</button>
@@ -138,7 +137,7 @@ input[type=text]:focus{border-color:var(--acc);}
     <div class="ctr" id="tq-ctr">0 words selected</div>
   </div>
   <div class="card">
-    <div class="ct">Quiz columns</div>
+    <div class="ct">Step 2 — Quiz columns</div>
     <div class="opt-row">
       <label class="ck"><input type="checkbox" id="t-ko" checked><span>① Korean meaning</span></label>
       <label class="ck"><input type="checkbox" id="t-en"><span>② English word</span></label>
@@ -155,19 +154,22 @@ input[type=text]:focus{border-color:var(--acc);}
       <label class="ck"><input type="checkbox" id="t-sh" checked><span>Shuffle order</span></label>
     </div>
   </div>
-  <div class="brow">
-    <button class="btn btn-s" id="t-prev-btn">👁 Preview</button>
-    <button class="btn btn-g" id="t-gen-btn">⬇ Download Excel Quiz</button>
+  <div class="card">
+    <div class="ct">Step 3 — Generate</div>
+    <div class="brow">
+      <button class="btn btn-s" id="t-prev-btn">👁 Preview</button>
+      <button class="btn btn-p" id="t-gen-btn">⬇ Download Excel Quiz</button>
+    </div>
+    <div class="st" id="t-status"></div>
+      <div id="t-preview" style="overflow-x:auto;margin-top:.5rem;font-size:12px;"></div>
   </div>
-  <div id="t-preview" style="overflow-x:auto;font-size:12px;"></div>
-  <div class="st" id="t-status"></div>
 </div>
 
 <!-- STUDENT PANEL -->
 <div class="panel" id="panel-student">
   <div id="s-setup">
     <div class="card">
-      <div class="ct">Select rounds</div>
+      <div class="ct">Select questions</div>
       <div class="qgrid" id="sq-grid"></div>
       <div style="display:flex;gap:10px;margin-bottom:.5rem;">
         <button class="lbtn" id="sq-all">Select all</button>
@@ -180,31 +182,31 @@ input[type=text]:focus{border-color:var(--acc);}
       <div class="cat-card" id="cat-vocab" onclick="toggleCat('vocab')">
         <div class="cat-header">
           <div>
-            <div class="cat-title">① 📚 Vocabulary Quiz</div>
+            <div class="cat-title">① 📚 Let's Study Vocabulary!</div>
             <div class="cat-desc">Word meaning, spelling &amp; definition quizzes</div>
           </div>
           <div class="cat-arrow" id="arrow-vocab">▼</div>
         </div>
         <div class="cat-body" id="body-vocab" style="display:none;">
-          <div class="mc sel" id="mode-mc"><div class="mc-t">Multiple choice 객관식 ⭐⭐</div><div class="mc-d">4 options — pick the correct Korean meaning</div></div>
-          <div class="mc" id="mode-w1"><div class="mc-t">✍️ Type 1 — Korean → English ⭐⭐⭐</div><div class="mc-d">See Korean meaning → type the English word</div></div>
-          <div class="mc" id="mode-w2"><div class="mc-t">✍️ Type 2 — Definition → English ⭐⭐⭐</div><div class="mc-d">See English definition → type the English word</div></div>
+          <div class="mc sel" id="mode-mc"><div class="mc-t">Multiple choice 객관식 <span class="stars">⭐⭐</span></div><div class="mc-d">4 options — pick the correct Korean meaning</div></div>
+          <div class="mc" id="mode-w1"><div class="mc-t">✍️ Type 1 — Korean → English <span class="stars">⭐⭐⭐</span></div><div class="mc-d">See Korean meaning → type the English word</div></div>
+          <div class="mc" id="mode-w2"><div class="mc-t">✍️ Type 2 — Definition → English <span class="stars">⭐⭐⭐</span></div><div class="mc-d">See English definition → type the English word</div></div>
         </div>
       </div>
       <div class="cat-card" id="cat-sent" onclick="toggleCat('sent')" style="margin-top:.6rem;">
         <div class="cat-header">
           <div>
-            <div class="cat-title">② 📝 Sentence Quiz</div>
+            <div class="cat-title">② 📝 Let's Study Sentences!</div>
             <div class="cat-desc">Fill in blanks &amp; rebuild example sentences</div>
           </div>
           <div class="cat-arrow" id="arrow-sent">▶</div>
         </div>
         <div class="cat-body" id="body-sent" style="display:none;">
-          <div class="mc" id="mode-fi2"><div class="mc-t">✏️ Fill in the blank + 🇰🇷 ⭐⭐</div><div class="mc-d">Korean translation shown as scaffold</div></div>
-          <div class="mc" id="mode-fi"><div class="mc-t">✏️ Fill in the blank ⭐⭐⭐</div><div class="mc-d">Type the missing word — no Korean hint</div></div>
-          <div class="mc" id="mode-scr"><div class="mc-t">🔀 Sentence Scramble ⭐⭐⭐⭐⭐</div><div class="mc-d">Click words to rebuild the sentence in order</div></div>
-          <div class="mc" id="mode-scr2"><div class="mc-t">🌈 Medium Scramble ⭐⭐⭐</div><div class="mc-d">Words colour-coded by part of speech as a hint</div></div>
-          <div class="mc" id="mode-scr3"><div class="mc-t">🧩 Easy Scramble — Chunks ⭐⭐</div><div class="mc-d">Arrange meaningful phrase chunks in the right order</div></div>
+          <div class="mc" id="mode-fi2"><div class="mc-t">✏️ Fill in the blank + 🇰🇷 <span class="stars">⭐⭐</span></div><div class="mc-d">Korean translation shown as scaffold</div></div>
+          <div class="mc" id="mode-fi"><div class="mc-t">✏️ Fill in the blank <span class="stars">⭐⭐⭐</span></div><div class="mc-d">Type the missing word — no Korean hint</div></div>
+          <div class="mc" id="mode-scr"><div class="mc-t">🔀 Sentence Scramble <span class="stars">⭐⭐⭐⭐⭐</span></div><div class="mc-d">Click words to rebuild the sentence in order</div></div>
+          <div class="mc" id="mode-scr2"><div class="mc-t">🌈 Medium Scramble <span class="stars">⭐⭐⭐</span></div><div class="mc-d">Words colour-coded by part of speech as a hint</div></div>
+          <div class="mc" id="mode-scr3"><div class="mc-t">🧩 Easy Scramble — Chunks <span class="stars">⭐⭐</span></div><div class="mc-d">Arrange meaningful phrase chunks in the right order</div></div>
         </div>
       </div>
     </div>
@@ -242,6 +244,7 @@ input[type=text]:focus{border-color:var(--acc);}
     <div class="card">
       <div style="text-align:right;margin-bottom:.25rem;">
         <span id="sc-tasktype" style="font-size:11px;font-weight:700;padding:3px 10px;border-radius:12px;background:#E3EEF7;color:#1A3A5C;"></span>
+      <div id="sc-selection" style="display:flex;flex-wrap:wrap;gap:5px;justify-content:center;margin-bottom:.6rem;margin-top:.4rem;"></div>
       </div>
       <div class="score-emoji" id="sc-emoji"></div>
       <div class="score-big" id="sc-pct"></div>
@@ -1277,13 +1280,15 @@ function renderQuiz(){
 }
 
 function showExpl(idx,word,ko,pos,ex){
-  var card=document.getElementById('card_'+idx);
-  if(!card) return;
-  var expl=card.querySelector('.expl');
-  if(!expl){expl=document.createElement('div');expl.className='expl';card.appendChild(expl);}
-  var def=DEFS[word]?'<span class="eng-def">💡 '+DEFS[word]+'</span><br>':'';
-  expl.innerHTML=def+'<strong>'+word+'</strong> <span style="color:var(--ink3);">('+pos+')</span> — <span style="color:var(--grn);">'+ko+'</span><br><span style="font-style:italic;">'+ex+'</span>';
-  expl.style.display='block';
+  var el=document.getElementById('expl_'+idx);
+  if(el){
+    el.innerHTML=
+      '<strong>'+word+'</strong> <span style="color:var(--ink3);">'+pos+'</span><br>'+
+      (DEFS[word]?'<span class="eng-def">💡 '+DEFS[word]+'</span><br>':'')+
+      '<span style="color:var(--grn);font-size:12px;">🇰🇷 '+ko+'</span><br>'+
+      '<span style="color:var(--ink3);font-size:11px;font-style:italic;">'+ex+'</span>';
+    el.style.display='block';
+  }
 }
 
 function printResult(){
@@ -1597,88 +1602,95 @@ function makeQCard(w,idx){
     winp.type='text';
     winp.className='finp';
     winp.id='fi_'+idx;
-    winp.placeholder='Type the English word/phrase...';
+    winp.placeholder='Type the English word...';
     var wbtn=document.createElement('button');
-    wbtn.textContent='Check ✓';
-    wbtn.className='btn btn-p';
-    wbtn.style.fontSize='13px';
+    wbtn.className='btn btn-s';
+    wbtn.textContent='Check';
     wbtn.type='button';
+    var wfn=(function(input,correctWord,cardIdx,cardKo,cardPos,cardEx,row){
+      return function(){
+        if(answered[cardIdx]!==undefined) return;
+        var val=input.value.trim();
+        if(!val) return;
+        var ok=(val===correctWord);
+        answered[cardIdx]=val;
+        if(ok){correct++;input.classList.add('correct');}
+        else{wrong++;input.classList.add('wrong');}
+        input.disabled=true;wbtn.disabled=true;
+        var ans=document.createElement('div');
+        ans.style.cssText='font-size:12px;margin-top:5px;font-weight:600;';
+        ans.style.color=ok?'var(--grn)':'var(--red)';
+        ans.textContent=(ok?'✓ Correct! ':'✗ Correct answer: ')+correctWord;
+        row.appendChild(ans);
+        if(!ok){
+          var hint=document.createElement('div');
+          hint.style.cssText='font-size:11px;margin-top:4px;color:var(--ink3);font-style:italic;';
+          hint.textContent='e.g. '+cardEx;
+          row.appendChild(hint);
+        }
+        updateLive();
+        if(document.getElementById('s-rv').checked) showExpl(cardIdx,correctWord,cardKo,cardPos,cardEx);
+      };
+    })(winp,word,idx,ko,pos,ex,wfrow);
+    winp.addEventListener('keydown',function(e){if(e.key==='Enter') wfn();});
+    wbtn.addEventListener('click',wfn);
     wfrow.appendChild(winp);
     wfrow.appendChild(wbtn);
     div.appendChild(wfrow);
-    function checkWrite(){
-      if(answered[idx]!==undefined) return;
-      var val=winp.value.trim();
-      if(!val) return;
-      answered[idx]=val;
-      var ok=val.toLowerCase()===word.toLowerCase();
-      if(ok) correct++; else wrong++;
-      updateLive();
-      winp.disabled=true;wbtn.disabled=true;
-      winp.classList.add(ok?'correct':'wrong');
-      if(!ok){
-        var fix=document.createElement('div');
-        fix.style.cssText='font-size:12px;color:var(--red);margin-top:4px;';
-        fix.textContent='✗  Correct: '+word;
-        div.appendChild(fix);
-      }
-      if(document.getElementById('s-rv').checked) showExpl(idx,word,ko,pos,ex);
-    }
-    wbtn.addEventListener('click',checkWrite);
-    winp.addEventListener('keydown',function(e){if(e.key==='Enter') checkWrite();});
 
   } else if(type==='fill'||type==='fill2'){
-    var filled=makeFill(word,ex);
+    var sentence=makeFill(word,ex);
+    var p3=document.createElement('div');
+    p3.className='qprompt';
+    p3.style.fontSize='13px';
+    p3.style.fontWeight='400';
+    p3.textContent=sentence;
+    div.appendChild(p3);
     if(type==='fill2'){
       var koSentFill=KO_SENT[ex]||'';
       if(koSentFill){
-        var koh=document.createElement('div');
-        koh.className='qhint';
-        koh.style.cssText='font-size:13px;color:var(--acc);padding:6px 10px;background:#EAF0F7;border-radius:8px;border-left:3px solid var(--acc);margin-bottom:.5rem;';
-        koh.textContent='🇰🇷 '+koSentFill;
-        div.appendChild(koh);
+        var koFill=document.createElement('div');
+        koFill.style.cssText='font-size:12px;color:#1E6B3C;font-weight:600;margin-top:5px;margin-bottom:.75rem;line-height:1.6;';
+        koFill.innerHTML='&#127472;&#127479; '+koSentFill;
+        div.appendChild(koFill);
       }
     }
-    var fp=document.createElement('div');
-    fp.className='qprompt';
-    fp.style.fontSize='14px';
-    fp.textContent=filled;
-    div.appendChild(fp);
     var ffrow=document.createElement('div');
     ffrow.className='frow';
     var finp=document.createElement('input');
     finp.type='text';
     finp.className='finp';
     finp.id='fi_'+idx;
-    finp.placeholder='Fill in the blank...';
+    finp.placeholder='Type the missing word...';
     var fbtn=document.createElement('button');
-    fbtn.textContent='Check ✓';
-    fbtn.className='btn btn-p';
-    fbtn.style.fontSize='13px';
+    fbtn.className='btn btn-s';
+    fbtn.textContent='Check';
     fbtn.type='button';
+    var checkFn=(function(input,correctWord,cardIdx,row){
+      return function(){
+        if(answered[cardIdx]!==undefined) return;
+        var val=input.value.trim().toLowerCase();
+        var cw=correctWord.toLowerCase();
+        var stripped=cw.replace(/^(be|get|make|have|do|feel|come|go|take|give|put|set|bring|keep|let|turn|look|run|fall|hold|stand|stay|become|seem|appear)\s+/,'');
+        var ok=(val===cw||val===stripped);
+        answered[cardIdx]=val;
+        if(ok){correct++;input.classList.add('correct');}
+        else{wrong++;input.classList.add('wrong');}
+        input.disabled=true;fbtn.disabled=true;
+        var ans=document.createElement('div');
+        ans.style.cssText='font-size:12px;margin-top:5px;';
+        ans.style.color=ok?'var(--grn)':'var(--red)';
+        ans.textContent=(ok?'✓ Correct! ':'✗ Answer: ')+correctWord;
+        row.appendChild(ans);
+        updateLive();
+        if(document.getElementById('s-rv').checked) showExpl(cardIdx,correctWord,ko,pos,ex);
+      };
+    })(finp,word,idx,ffrow);
+    finp.addEventListener('keydown',function(e){if(e.key==='Enter') checkFn();});
+    fbtn.addEventListener('click',checkFn);
     ffrow.appendChild(finp);
     ffrow.appendChild(fbtn);
     div.appendChild(ffrow);
-    function checkFill(){
-      if(answered[idx]!==undefined) return;
-      var val=finp.value.trim();
-      if(!val) return;
-      answered[idx]=val;
-      var ok=val.toLowerCase()===word.toLowerCase();
-      if(ok) correct++; else wrong++;
-      updateLive();
-      finp.disabled=true;fbtn.disabled=true;
-      finp.classList.add(ok?'correct':'wrong');
-      if(!ok){
-        var fix2=document.createElement('div');
-        fix2.style.cssText='font-size:12px;color:var(--red);margin-top:4px;';
-        fix2.textContent='✗  Correct: '+word;
-        div.appendChild(fix2);
-      }
-      if(document.getElementById('s-rv').checked) showExpl(idx,word,ko,pos,ex);
-    }
-    fbtn.addEventListener('click',checkFill);
-    finp.addEventListener('keydown',function(e){if(e.key==='Enter') checkFill();});
 
   } else if(type==='scramble'){
     var sd=document.createElement('div');
@@ -1687,43 +1699,44 @@ function makeQCard(w,idx){
     swl.textContent=word+' ('+pos+')';
     sd.appendChild(swl);
     var swk=document.createElement('div');
-    swk.style.cssText='font-size:12px;color:var(--ink2);margin-bottom:.75rem;line-height:1.6;';
+    swk.style.cssText='font-size:12px;margin-bottom:.9rem;line-height:1.6;';
     var koSent=KO_SENT[ex]||'';
-    swk.textContent='🇰🇷 '+ko+(koSent?' | '+koSent:'');
+    swk.innerHTML='&#127472;&#127479; <span style="color:#1E6B3C;font-weight:600;">'+(koSent||ko)+'</span>';
     sd.appendChild(swk);
     var sInstr=document.createElement('div');
     sInstr.style.cssText='font-size:11px;color:var(--ink3);margin-bottom:.6rem;';
-    sInstr.textContent='Click words to build the sentence in order.';
+    sInstr.textContent='Click a word to move it to your answer. Click again to return it.';
     sd.appendChild(sInstr);
     var words_arr=ex.split(' ');
     var shuffled=shuffle(words_arr.slice());
     var safety=0;
     while(shuffled.join(' ')===ex&&safety<15){shuffled=shuffle(words_arr.slice());safety++;}
-    var bankT=document.createElement('div');
-    bankT.style.cssText='font-size:11px;font-weight:700;color:var(--acc);text-transform:uppercase;letter-spacing:.5px;margin-bottom:.4rem;';
-    bankT.textContent='Word Bank';
-    sd.appendChild(bankT);
+    var bankTitle=document.createElement('div');
+    bankTitle.style.cssText='font-size:11px;font-weight:700;color:var(--acc);text-transform:uppercase;letter-spacing:.5px;margin-bottom:.4rem;';
+    bankTitle.textContent='Word Bank';
+    sd.appendChild(bankTitle);
     var bankZone=document.createElement('div');
-    bankZone.className='scr-zone';
+    bankZone.style.cssText='min-height:50px;border:2px dashed #b0b8c4;border-radius:10px;padding:8px;display:flex;flex-wrap:wrap;gap:6px;background:var(--sf);margin-bottom:.9rem;';
     sd.appendChild(bankZone);
-    var ansT=document.createElement('div');
-    ansT.style.cssText='font-size:11px;font-weight:700;color:var(--acc);text-transform:uppercase;letter-spacing:.5px;margin-bottom:.4rem;margin-top:.75rem;';
-    ansT.textContent='Your Sentence';
-    sd.appendChild(ansT);
+    var ansTitle=document.createElement('div');
+    ansTitle.style.cssText='font-size:11px;font-weight:700;color:var(--acc);text-transform:uppercase;letter-spacing:.5px;margin-bottom:.4rem;';
+    ansTitle.textContent='Your Answer';
+    sd.appendChild(ansTitle);
     var ansZone=document.createElement('div');
-    ansZone.className='scr-zone';
+    ansZone.style.cssText='min-height:50px;border:2px dashed #b0b8c4;border-radius:10px;padding:8px;display:flex;flex-wrap:wrap;gap:6px;background:var(--sf);margin-bottom:.75rem;';
     sd.appendChild(ansZone);
     var fb=document.createElement('div');
-    fb.className='scr-feedback';
+    fb.style.cssText='font-size:13px;font-weight:600;min-height:20px;margin-bottom:.5rem;';
     sd.appendChild(fb);
     var keyDiv=document.createElement('div');
-    keyDiv.className='scr-key';
-    keyDiv.style.display='none';
+    keyDiv.style.cssText='display:none;font-size:12px;color:#1E6B3C;font-style:italic;padding:6px 10px;background:#E3F5EB;border-radius:8px;border-left:3px solid #1E6B3C;margin-bottom:.5rem;';
     sd.appendChild(keyDiv);
     function makeChip(text){
       var chip=document.createElement('span');
-      chip.className='word-chip';
       chip.textContent=text;
+      chip.style.cssText='display:inline-block;padding:7px 13px;background:#fff;border:1.5px solid #b0b8c4;border-radius:20px;font-size:13px;color:var(--ink);cursor:pointer;user-select:none;font-family:inherit;transition:background .15s,transform .1s;';
+      chip.addEventListener('mouseenter',function(){if(!chip.dataset.locked)chip.style.background='#E3EEF7';});
+      chip.addEventListener('mouseleave',function(){if(!chip.dataset.locked)chip.style.background='#fff';});
       chip.addEventListener('click',function(){
         if(answered[idx]!==undefined||chip.dataset.locked) return;
         if(chip.parentElement===bankZone) ansZone.appendChild(chip);
@@ -1748,8 +1761,14 @@ function makeQCard(w,idx){
       answered[idx]=attempt;
       var allChips=[].slice.call(bankZone.querySelectorAll('span')).concat([].slice.call(ansZone.querySelectorAll('span')));
       allChips.forEach(function(c){c.dataset.locked='1';c.style.cursor='default';});
-      if(ok){correct++;fb.textContent='✓ Perfect!';fb.classList.add('ok');ansZone.classList.add('correct-zone');}
-      else{wrong++;fb.textContent='✗ Not quite — check the word order';fb.classList.add('ng');ansZone.classList.add('wrong-zone');keyDiv.textContent='✓ '+ex;keyDiv.style.display='block';}
+      if(ok){
+        correct++;fb.textContent='✓ Perfect!';fb.style.color='var(--grn)';
+        ansZone.style.borderColor='var(--grn)';ansZone.style.background='var(--grn-l)';
+      } else {
+        wrong++;fb.textContent='✗ Not quite — check the word order';fb.style.color='var(--red)';
+        ansZone.style.borderColor='var(--red)';ansZone.style.background='var(--red-l)';
+        keyDiv.textContent='✓ '+ex;keyDiv.style.display='block';
+      }
       checkBtn.disabled=true;resetBtn.disabled=true;
       updateLive();
       if(document.getElementById('s-rv').checked) showExpl(idx,word,ko,pos,ex);
@@ -1762,8 +1781,9 @@ function makeQCard(w,idx){
     resetBtn.addEventListener('click',function(){
       if(answered[idx]!==undefined) return;
       [].slice.call(ansZone.querySelectorAll('span')).forEach(function(c){bankZone.appendChild(c);});
-      fb.textContent='';fb.className='scr-feedback';keyDiv.style.display='none';
-      ansZone.className='scr-zone';bankZone.className='scr-zone';
+      fb.textContent='';fb.style.color='';keyDiv.style.display='none';
+      ansZone.style.borderColor='#b0b8c4';ansZone.style.background='var(--sf)';
+      bankZone.style.borderColor='#b0b8c4';bankZone.style.background='var(--sf)';
     });
     btnRow.appendChild(checkBtn);btnRow.appendChild(resetBtn);
     sd.appendChild(btnRow);
@@ -1773,15 +1793,20 @@ function makeQCard(w,idx){
   } else if(type==='scramble3'){
     makeScramble3Card(w,idx,div);
   }
+  // explanation div — empty until student answers (matches Start quiz)
+  var expl=document.createElement('div');
+  expl.className='expl';
+  expl.id='expl_'+idx;
+  div.appendChild(expl);
   return div;
 }
 
 // ─── POS TAGGER ────────────────────────────────
 var POS_COLORS={
-  'noun':{bg:'#DBEAFE',border:'#3B82F6',color:'#1E3A8A'},
-  'verb':{bg:'#DCFCE7',border:'#22C55E',color:'#14532D'},
-  'adj':{bg:'#FEF3C7',border:'#F59E0B',color:'#78350F'},
-  'other':{bg:'#F1F5F9',border:'#94A3B8',color:'#334155'}
+  'noun':{bg:'#DBEAFE',border:'#3B82F6',color:'#1E3A8A',label:'Noun'},
+  'verb':{bg:'#DCFCE7',border:'#22C55E',color:'#14532D',label:'Verb'},
+  'adj':{bg:'#FEF3C7',border:'#F59E0B',color:'#78350F',label:'Adj/Adv'},
+  'other':{bg:'#F1F5F9',border:'#94A3B8',color:'#334155',label:'Other'}
 };
 function tagToken(token){
   var t=token.toLowerCase().replace(/[.,!?;:'"()]/g,'');
@@ -1846,9 +1871,19 @@ function makeScramble2Card(w,idx,div){
   swl.textContent=word+' ('+pos+')';
   sd.appendChild(swl);
   var swk=document.createElement('div');
-  swk.className='scr-word-ko';
-  swk.textContent='🇰🇷 '+ko+(koSent2?' | '+koSent2:'');
+  swk.style.cssText='font-size:12px;margin-bottom:.75rem;line-height:1.6;';
+  swk.innerHTML='&#127472;&#127479; <span style="color:#1E6B3C;font-weight:600;">'+(koSent2||ko)+'</span>';
   sd.appendChild(swk);
+  var legend=document.createElement('div');
+  legend.style.cssText='display:flex;flex-wrap:wrap;gap:6px;margin-bottom:.75rem;';
+  Object.keys(POS_COLORS).forEach(function(k){
+    var c=POS_COLORS[k];
+    var tag=document.createElement('span');
+    tag.style.cssText='font-size:10px;padding:2px 8px;border-radius:10px;border:1.5px solid '+c.border+';background:'+c.bg+';color:'+c.color+';font-weight:700;';
+    tag.textContent=c.label||k;
+    legend.appendChild(tag);
+  });
+  sd.appendChild(legend);
   var sInstr=document.createElement('div');
   sInstr.style.cssText='font-size:11px;color:var(--ink3);margin-bottom:.6rem;';
   sInstr.textContent='Words are colour-coded by part of speech. Click to build the sentence.';
@@ -1856,16 +1891,24 @@ function makeScramble2Card(w,idx,div){
   var words_arr=ex.split(' ');
   var shuffled=shuffle(words_arr.slice());
   var safety=0;while(shuffled.join(' ')===ex&&safety<15){shuffled=shuffle(words_arr.slice());safety++;}
-  var bankT=document.createElement('div');
-  bankT.style.cssText='font-size:11px;font-weight:700;color:var(--acc);text-transform:uppercase;letter-spacing:.5px;margin-bottom:.4rem;';
-  bankT.textContent='Word Bank';sd.appendChild(bankT);
-  var bankZone=document.createElement('div');bankZone.className='scr-zone';sd.appendChild(bankZone);
-  var ansT=document.createElement('div');
-  ansT.style.cssText='font-size:11px;font-weight:700;color:var(--acc);text-transform:uppercase;letter-spacing:.5px;margin-bottom:.4rem;margin-top:.75rem;';
-  ansT.textContent='Your Sentence';sd.appendChild(ansT);
-  var ansZone=document.createElement('div');ansZone.className='scr-zone';sd.appendChild(ansZone);
-  var fb=document.createElement('div');fb.className='scr-feedback';sd.appendChild(fb);
-  var keyDiv=document.createElement('div');keyDiv.className='scr-key';keyDiv.style.display='none';sd.appendChild(keyDiv);
+  var bankTitle2=document.createElement('div');
+  bankTitle2.style.cssText='font-size:11px;font-weight:700;color:var(--acc);text-transform:uppercase;letter-spacing:.5px;margin-bottom:.4rem;';
+  bankTitle2.textContent='Word Bank';sd.appendChild(bankTitle2);
+  var bankZone=document.createElement('div');
+  bankZone.style.cssText='min-height:50px;border:2px dashed #b0b8c4;border-radius:10px;padding:8px;display:flex;flex-wrap:wrap;gap:6px;background:var(--sf);margin-bottom:.9rem;';
+  sd.appendChild(bankZone);
+  var ansTitle2=document.createElement('div');
+  ansTitle2.style.cssText='font-size:11px;font-weight:700;color:var(--acc);text-transform:uppercase;letter-spacing:.5px;margin-bottom:.4rem;';
+  ansTitle2.textContent='Your Answer';sd.appendChild(ansTitle2);
+  var ansZone=document.createElement('div');
+  ansZone.style.cssText='min-height:50px;border:2px dashed #b0b8c4;border-radius:10px;padding:8px;display:flex;flex-wrap:wrap;gap:6px;background:var(--sf);margin-bottom:.75rem;';
+  sd.appendChild(ansZone);
+  var fb=document.createElement('div');
+  fb.style.cssText='font-size:13px;font-weight:600;min-height:20px;margin-bottom:.5rem;';
+  sd.appendChild(fb);
+  var keyDiv=document.createElement('div');
+  keyDiv.style.cssText='display:none;font-size:12px;color:#1E6B3C;font-style:italic;padding:6px 10px;background:#E3F5EB;border-radius:8px;border-left:3px solid #1E6B3C;margin-bottom:.5rem;';
+  sd.appendChild(keyDiv);
   function makeColorChip(text){
     var posType=tagToken(text);
     var c=POS_COLORS[posType]||POS_COLORS['other'];
@@ -1890,8 +1933,14 @@ function makeScramble2Card(w,idx,div){
     var ok=(attempt===ex);answered[idx]=attempt;
     var allChips=[].slice.call(bankZone.querySelectorAll('span')).concat([].slice.call(ansZone.querySelectorAll('span')));
     allChips.forEach(function(c){c.dataset.locked='1';c.style.cursor='default';});
-    if(ok){correct++;fb.textContent='✓ Perfect!';fb.classList.add('ok');ansZone.classList.add('correct-zone');}
-    else{wrong++;fb.textContent='✗ Not quite — check the word order';fb.classList.add('ng');ansZone.classList.add('wrong-zone');keyDiv.textContent='✓ '+ex;keyDiv.style.display='block';}
+    if(ok){
+      correct++;fb.textContent='✓ Perfect!';fb.style.color='var(--grn)';
+      ansZone.style.borderColor='var(--grn)';ansZone.style.background='var(--grn-l)';
+    } else {
+      wrong++;fb.textContent='✗ Not quite — check the word order';fb.style.color='var(--red)';
+      ansZone.style.borderColor='var(--red)';ansZone.style.background='var(--red-l)';
+      keyDiv.textContent='✓ '+ex;keyDiv.style.display='block';
+    }
     checkBtn.disabled=true;resetBtn.disabled=true;updateLive();
     if(document.getElementById('s-rv').checked) showExpl(idx,word,ko,pos,ex);
   });
@@ -1899,8 +1948,9 @@ function makeScramble2Card(w,idx,div){
   resetBtn.addEventListener('click',function(){
     if(answered[idx]!==undefined) return;
     [].slice.call(ansZone.querySelectorAll('span')).forEach(function(c){bankZone.appendChild(c);});
-    fb.textContent='';fb.className='scr-feedback';keyDiv.style.display='none';
-    ansZone.className='scr-zone';bankZone.className='scr-zone';
+    fb.textContent='';fb.style.color='';keyDiv.style.display='none';
+    ansZone.style.borderColor='#b0b8c4';ansZone.style.background='var(--sf)';
+    bankZone.style.borderColor='#b0b8c4';bankZone.style.background='var(--sf)';
   });
   btnRow.appendChild(checkBtn);btnRow.appendChild(resetBtn);sd.appendChild(btnRow);div.appendChild(sd);
 }
@@ -1913,8 +1963,8 @@ function makeScramble3Card(w,idx,div){
   swl3.style.cssText='font-size:13px;font-weight:700;color:var(--acc);margin-bottom:4px;';
   swl3.textContent=word+' ('+pos+')';s3.appendChild(swl3);
   var swk3=document.createElement('div');
-  swk3.className='scr-word-ko';
-  swk3.textContent='🇰🇷 '+ko+(koSent3?' | '+koSent3:'');
+  swk3.style.cssText='font-size:12px;margin-bottom:.75rem;line-height:1.6;';
+  swk3.innerHTML='&#127472;&#127479; <span style="color:#1E6B3C;font-weight:600;">'+(koSent3||ko)+'</span>';
   s3.appendChild(swk3);
   var instr3=document.createElement('div');
   instr3.style.cssText='font-size:11px;color:var(--ink3);margin-bottom:.6rem;';
@@ -2014,6 +2064,24 @@ function showScore(){
   };
   var taskEl=document.getElementById('sc-tasktype');
   if(taskEl) taskEl.textContent=taskLabels[quizMode]||quizMode;
+  // Show selected rounds on results screen
+  var selEl=document.getElementById('sc-selection');
+  if(selEl){
+    selEl.innerHTML='';
+    var sortedSel=[...sSel].sort();
+    if(sortedSel.length>0){
+      var label=document.createElement('span');
+      label.style.cssText='font-size:10px;font-weight:700;padding:3px 9px;border-radius:12px;background:var(--acc);color:#fff;';
+      label.textContent='📋 Rounds';
+      selEl.appendChild(label);
+      sortedSel.forEach(function(d){
+        var tag=document.createElement('span');
+        tag.style.cssText='font-size:10px;font-weight:600;padding:3px 9px;border-radius:12px;background:#E3EEF7;color:var(--acc);';
+        tag.textContent=d;
+        selEl.appendChild(tag);
+      });
+    }
+  }
   document.getElementById('sc-emoji').textContent=emoji;
   document.getElementById('sc-pct').textContent=pct+'%';
   var name=document.getElementById('s-name').value;
